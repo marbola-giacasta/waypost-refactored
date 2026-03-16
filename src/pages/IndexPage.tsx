@@ -229,8 +229,8 @@ const IndexPage: React.FC = () => {
             </div>
           </div>
 
-          {/* COMPANIES PANEL — keyed so it fully remounts on each visit */}
-          <div className="slide-panel" key={companiesKey}>
+          {/* COMPANIES PANEL — never remounts; resetKey prop collapses open drawers */}
+          <div className="slide-panel">
             <div className="scroll-fade-wrap">
               {cLoading ? (
                 <div className="loading-msg">
@@ -250,6 +250,7 @@ const IndexPage: React.FC = () => {
                       filtersKeyword={filters.keyword}
                       targetLang={targetLang}
                       index={i}
+                      resetKey={companiesKey}
                     />
                   ))}
                 </div>

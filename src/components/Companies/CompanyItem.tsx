@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { ParsedCompanyWithTranslation } from '../../utils/constants';
 import { Highlight } from '../Filters/Highlight';
 
@@ -7,13 +7,22 @@ interface Props {
   filtersKeyword: string;
   targetLang:     string;
   index:          number;
+  resetKey?:      number;  // increments when user navigates away — collapses open drawers
 }
 
-export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLang, index }) => {
+export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLang, index, resetKey }) => {
   const [expanded, setExpanded] = useState(false);
   const descRef   = useRef<HTMLDivElement>(null);
   const pointerY  = useRef<number>(0);
   const didScroll = useRef(false);
+
+  // Silently collapse any open drawer when the parent signals a reset.
+  // This avoids remounting the panel (which causes the white-flash "reload").
+  useEffect(() => {
+    if (resetKey === undefined) return;
+    setExpanded(false);
+    if (descRef.current) descRef.current.scrollTop = 0;
+  }, [resetKey]);
 
   const desc    = company._translatedDesc ?? company.Panoramica ?? '';
   const sectors = company['Settori di competenza'] ?? '';

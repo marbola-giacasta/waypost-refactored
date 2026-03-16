@@ -138,7 +138,11 @@ const IndexPage: React.FC = () => {
             className={`vtab${view === 'jobs' ? ' active' : ''}`}
             onClick={() => setView('jobs')}
           >
-            jobs {(jLoading || liLoading) ? '…' : `(${filteredJobs.length})`}
+            jobs {(jLoading || liLoading)
+              ? '…'
+              : visibleCount < filteredJobs.length
+                ? `(${visibleCount}+)`
+                : `(${filteredJobs.length})`}
           </button>
           <button
             className={`vtab${view === 'companies' ? ' active' : ''}`}

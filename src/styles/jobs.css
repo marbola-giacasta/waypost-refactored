@@ -88,14 +88,28 @@
   line-height: 1.35;
 }
 
-/* Company sectors — same slot as title */
-.company-sectors {
+/* Company sectors — single-line looping marquee under company name */
+.jc-sectors-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  height: 16px;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.jc-sectors-inner {
+  display: inline-block;
+  white-space: nowrap;
   font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 10px;
   color: var(--dim);
   letter-spacing: 0.05em;
-  line-height: 1.4;
+  animation: sectorsTick 18s linear infinite;
+}
+@keyframes sectorsTick {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 .jc-tags {
@@ -169,13 +183,14 @@
 .job-desc-drawer {
   position: relative;
   background: rgba(0,0,0,0.3);
-  border-bottom: 1px solid rgba(0,255,65,0.12);
-  border-left: 3px solid rgba(0,255,65,0.18);
-  max-height: 320px;
+  border-bottom: 1px solid rgba(0,255,65,0.1);
+  border-left: 2px solid rgba(0,255,65,0.12);
+  max-height: 280px;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 14px 16px 14px 20px;
+  padding: 10px 14px 10px 16px;
+  margin: 0 4px 0 4px;
   font-size: 11px;
   line-height: 1.75;
   color: rgba(226,232,227,0.72);

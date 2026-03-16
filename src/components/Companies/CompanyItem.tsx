@@ -64,8 +64,12 @@ export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLa
               <span className="loc-pill">{company._sourceFile}</span>
             )}
           </div>
-          <div className="jc-title company-sectors">
-            {sectors || 'Various sectors'}
+          <div className="jc-sectors-marquee">
+            <span className="jc-sectors-inner">
+              {sectors || 'Various sectors'}
+              &nbsp;&nbsp;·&nbsp;&nbsp;
+              {sectors || 'Various sectors'}
+            </span>
           </div>
         </div>
 

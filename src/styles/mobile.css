@@ -34,33 +34,38 @@
   /* Row 1: brand + marquee (full width, marquee takes remaining space) */
   .hdr-row1 {
     height: var(--hdr-row1-h);
-    padding: 0;              /* row handles its own spacing via hdr padding */
-    gap: 10px;
+    padding: 0;
+    gap: 0;
   }
   .hdr-brand        { font-size: 15px; padding: 4px 10px; flex-shrink: 0; }
-  .hdr-pipe         { margin: 0 8px; display: none; }   /* remove pipe on mobile */
-  /* Marquee fills all remaining row-1 space */
-  .hdr-marquee-wrap { display: flex !important; flex: 1; }
-  /* Hide desktop-only elements in row1 */
+  .hdr-pipe         { display: none; }
+  /* Marquee: small left nudge so it doesn't sit flush against brand */
+  .hdr-marquee-wrap { display: flex !important; flex: 1; margin-left: 14px; }
   .hdr-spacer            { display: none; }
   .hdr-right-desktop     { display: none; }
 
-  /* Row 2: auth buttons — LOGIN (left) | (center) REGISTER (right) */
+  /* Row 2: 3-column grid → LOGIN (left) · | (center) · REGISTER (right) */
   .hdr-row2-mobile {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     height: var(--hdr-row2-h);
     padding: 0 14px;
     border-top: 1px solid rgba(0,255,65,0.1);
   }
+  /* LOGIN form sits in col 1 — left-aligned */
   .hdr-row2-mobile .auth-row {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: contents; /* let children participate in the grid directly */
   }
-  .hdr-row2-mobile .auth-sep      { flex: 1; text-align: center; }
-  .hdr-row2-mobile .auth-form     { flex: 0 0 auto; }
+  .hdr-row2-mobile .auth-form:first-child { justify-self: start; }
+  /* | separator in col 2 — auto-centered by grid */
+  .hdr-row2-mobile .auth-sep {
+    justify-self: center;
+    color: rgba(0,255,65,0.35);
+    font-size: 14px;
+  }
+  /* REGISTER form in col 3 — right-aligned */
+  .hdr-row2-mobile .auth-form:last-child { justify-self: end; }
   .hdr-row2-mobile .auth-label    { font-size: 11px; letter-spacing: 0.14em; }
   .hdr-row2-mobile .auth-fields.visible {
     max-width: 300px; flex-wrap: nowrap; gap: 5px;

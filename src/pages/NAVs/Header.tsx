@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ tickerText, resultCount }) => {
       {/* ── Mobile:  row 1 = brand + marquee ────────────────────────── */}
       <div className="hdr-row1">
         <div className="hdr-brand">waypost</div>
-        <div className="hdr-pipe" />
+        <span className="hdr-pipe">|</span>
         <div className="hdr-marquee-wrap">
           <div className="hdr-marquee-inner">jobs ... in a minute</div>
         </div>

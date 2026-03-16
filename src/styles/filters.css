@@ -26,7 +26,7 @@
 .flbl {
   font-size: 8px;
   letter-spacing: 0.18em;
-  color: var(--dim2);
+  color: rgba(226, 232, 227, 0.7);
   text-transform: uppercase;
 }
 
@@ -174,7 +174,7 @@
   border-bottom: 1px solid rgba(0, 255, 65, 0.12);
   z-index: 898;
   display: grid;
-  grid-template-columns: 30px 2fr 1.8fr 124px;
+  grid-template-columns: 30px 2fr 1.8fr 120px;
   padding: 0 26px;
 }
 .ch {

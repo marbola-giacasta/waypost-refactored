@@ -40,7 +40,7 @@
   .hdr-brand        { font-size: 15px; padding: 4px 10px; flex-shrink: 0; }
   .hdr-pipe         { display: none; }
   /* Marquee: small left nudge so it doesn't sit flush against brand */
-  .hdr-marquee-wrap { display: flex !important; flex: 1; margin-left: 14px; }
+  .hdr-marquee-wrap { display: flex !important; flex: 1; margin-left: 10px; }
   .hdr-spacer            { display: none; }
   .hdr-right-desktop     { display: none; }
 

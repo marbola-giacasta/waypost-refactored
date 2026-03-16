@@ -41,13 +41,15 @@
   user-select: none;
 }
 
-/* Pipe divider */
+/* Pipe divider — green | character */
 .hdr-pipe {
-  width: 1px;
-  height: 32px;
-  background: rgba(0, 255, 65, 0.2);
-  margin: 0 18px;
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--green);
+  opacity: 0.7;
+  margin: 0 12px;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 /* Vertical marquee */
@@ -59,7 +61,7 @@
 .hdr-marquee-inner {
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: var(--dim2);
+  color: rgba(226, 232, 227, 0.65);
   white-space: nowrap;
   animation: marqueeVert 3.5s linear infinite;
 }

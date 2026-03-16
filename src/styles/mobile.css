@@ -38,39 +38,46 @@
     gap: 0;
   }
   .hdr-brand        { font-size: 15px; padding: 4px 10px; flex-shrink: 0; }
-  .hdr-pipe         { display: none; }
-  /* Marquee: small left nudge so it doesn't sit flush against brand */
-  .hdr-marquee-wrap { display: flex !important; flex: 1; margin-left: 10px; }
+  /* Show pipe between waypost and marquee on mobile */
+  .hdr-pipe         { display: inline !important; font-size: 14px; margin: 0 8px; opacity: 0.8; }
+  .hdr-marquee-wrap { display: flex !important; flex: 1; }
   .hdr-spacer            { display: none; }
   .hdr-right-desktop     { display: none; }
 
-  /* Row 2: 3-column grid → LOGIN (left) · | (center) · REGISTER (right) */
+  /* Row 2: flex with space-between so Register slides left when Login expands.
+     The | separator is absolute-centred so it never shifts. */
   .hdr-row2-mobile {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex !important;
     align-items: center;
     height: var(--hdr-row2-h);
-    padding: 0 14px;
+    padding: 0 16px;
     border-top: 1px solid rgba(0,255,65,0.1);
+    position: relative;      /* anchor for absolute | */
+    overflow: hidden;        /* clip fields that exceed row width */
   }
-  /* LOGIN form sits in col 1 — left-aligned */
   .hdr-row2-mobile .auth-row {
-    display: contents; /* let children participate in the grid directly */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
-  .hdr-row2-mobile .auth-form:first-child { justify-self: start; }
-  /* | separator in col 2 — auto-centered by grid */
+  /* The | is absolute so it stays at screen centre regardless of form widths */
   .hdr-row2-mobile .auth-sep {
-    justify-self: center;
-    color: rgba(0,255,65,0.35);
-    font-size: 14px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--green);
+    font-size: 16px;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
   }
-  /* REGISTER form in col 3 — right-aligned */
-  .hdr-row2-mobile .auth-form:last-child { justify-self: end; }
+  .hdr-row2-mobile .auth-form     { flex: 0 0 auto; }
   .hdr-row2-mobile .auth-label    { font-size: 11px; letter-spacing: 0.14em; }
   .hdr-row2-mobile .auth-fields.visible {
-    max-width: 300px; flex-wrap: nowrap; gap: 5px;
+    max-width: 260px; flex-wrap: nowrap; gap: 5px;
   }
-  .hdr-row2-mobile .auth-fields input { width: 82px; font-size: 11px; }
+  .hdr-row2-mobile .auth-fields input { width: 80px; font-size: 11px; }
   .hdr-row2-mobile .hdr-username  { font-size: 12px; }
 
   /* ── FILTERS BAR: relative, auto-height, flex-wrap ───────────────────── */
@@ -150,10 +157,12 @@
   }
 
   .hdr-brand { font-size: 14px; padding: 4px 9px; }
+  .hdr-pipe  { font-size: 12px !important; margin: 0 6px !important; }
+  .hdr-row2-mobile .auth-sep     { font-size: 14px !important; }
   .hdr-row2-mobile .auth-label   { font-size: 10px; }
-  .hdr-row2-mobile .auth-fields.visible { max-width: 220px; }
-  .hdr-row2-mobile .auth-fields input   { width: 70px; font-size: 10px; padding: 4px 6px; }
-  .auth-toggle-wrap input               { width: 70px !important; }
+  .hdr-row2-mobile .auth-fields.visible { max-width: 210px; }
+  .hdr-row2-mobile .auth-fields input   { width: 66px; font-size: 10px; padding: 4px 6px; }
+  .auth-toggle-wrap input               { width: 66px !important; }
 
   .filters-bar { gap: 7px 8px; padding: 9px 12px; }
   .fi          { font-size: 10.5px; }
@@ -188,7 +197,8 @@
   .auth-label   { font-size: 9.5px; }
   .jc-link      { font-size: 8.5px; padding: 3px 6px; }
   .fi           { font-size: 10px; }
-  .hdr-row2-mobile .auth-fields input { width: 60px; }
+  .hdr-row2-mobile .auth-fields input { width: 58px; padding: 3px 5px; }
+  .auth-toggle-wrap input             { width: 58px !important; }
 }
 
 

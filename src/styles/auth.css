@@ -19,7 +19,7 @@
 .auth-label.logout   { color: var(--red); }
 .auth-label:hover    { opacity: 0.75; }
 
-/* Form wrapper — each auth form is a fixed flex row that doesn't grow */
+/* Form wrapper */
 .auth-form {
   display: flex;
   align-items: center;
@@ -27,23 +27,21 @@
   flex-shrink: 0;
 }
 
-/* Fields container — GPU-composited reveal via clip-path + opacity.
-   Clip-path doesn't cause layout reflow, so the transition is silky smooth
-   and other elements (Register button) don't shift. */
+/* Fields — max-width slide: DOES affect layout so other buttons move with it */
 .auth-fields {
   display: flex;
   align-items: center;
   gap: 6px;
-  /* Reserve the width at all times — don't collapse to 0 */
-  max-width: 320px;
-  clip-path: inset(0 100% 0 0);   /* fully clipped = invisible, no space taken visually */
+  overflow: hidden;
+  max-width: 0;
   opacity: 0;
   pointer-events: none;
-  transition: clip-path 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity   0.28s ease;
+  transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity   0.25s ease;
+  will-change: max-width;
 }
 .auth-fields.visible {
-  clip-path: inset(0 0% 0 0);    /* fully revealed */
+  max-width: 360px;
   opacity: 1;
   pointer-events: auto;
 }

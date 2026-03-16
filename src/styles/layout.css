@@ -31,6 +31,11 @@
   height: 100%;
   flex-shrink: 0;
   position: relative;
+  /* Own compositing layer — prevents a repaint/scroll in one panel
+     from corrupting the other on iOS Safari */
+  isolation: isolate;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* Scroll area */

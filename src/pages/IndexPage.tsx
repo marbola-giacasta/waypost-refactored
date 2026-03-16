@@ -11,12 +11,21 @@ import type { SortKey }            from '../hooks/useFilteredData';
 
 type View = 'jobs' | 'companies';
 
-const PAGE_SIZE = 50; // Start small — loads more as user scrolls
+const PAGE_SIZE = 50;
 
 const IndexPage: React.FC = () => {
-  const [view, setView] = useState<View>('jobs');
+  const [view, setView]           = useState<View>('jobs');
+  // Incrementing this key forces CompanyItem components to fully remount
+  // whenever we navigate to companies — clearing any open drawer state
+  // and preventing the iOS Safari transform+scroll crash.
+  const [companiesKey, setCompaniesKey] = useState(0);
 
-  // ── Filters ────────────────────────────────────────────────────────────
+  const switchView = useCallback((v: View) => {
+    if (v === 'companies') setCompaniesKey(k => k + 1);
+    setView(v);
+  }, []);
+
+  // ── Filters ──────────────────────────────────────────────────────────
   const [filters, setFilters] = useState({
     company:  '',
     role:     '',
@@ -28,7 +37,7 @@ const IndexPage: React.FC = () => {
   const clearFilters = () =>
     setFilters({ company: '', role: '', location: '', keyword: '' });
 
-  // ── Sort ───────────────────────────────────────────────────────────────
+  // ── Sort ─────────────────────────────────────────────────────────────
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortAsc, setSortAsc] = useState(false);
   const setSort = (k: SortKey) => {
@@ -36,10 +45,10 @@ const IndexPage: React.FC = () => {
     else { setSortKey(k); setSortAsc(k !== 'date'); }
   };
 
-  // ── Translation ────────────────────────────────────────────────────────
+  // ── Translation ───────────────────────────────────────────────────────
   const [targetLang, setTargetLang] = useState('no');
 
-  // ── Data ───────────────────────────────────────────────────────────────
+  // ── Data ─────────────────────────────────────────────────────────────
   const { jobs: scraperJobs,  loading: jLoading }  = useLoadJobs();
   const { jobs: linkedInJobs, loading: liLoading }  = useLoadLinkedInJobs();
   const { companies,          loading: cLoading }   = useLoadCompanies();
@@ -51,22 +60,19 @@ const IndexPage: React.FC = () => {
     );
   }, [scraperJobs, linkedInJobs]);
 
-  // useFilteredData is now pure/synchronous — no translation, instant results
   const { filteredJobs, filteredCompanies } = useFilteredData(
     allJobs, companies, filters, sortKey, sortAsc,
   );
 
-  // ── Windowed rendering ─────────────────────────────────────────────────
+  // ── Windowed rendering ────────────────────────────────────────────────
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Reset to first page whenever the filtered set changes
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [filteredJobs]);
 
-  // onScroll handler — load next batch when near the bottom
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -81,7 +87,7 @@ const IndexPage: React.FC = () => {
     [filteredJobs, visibleCount],
   );
 
-  // ── Ticker ─────────────────────────────────────────────────────────────
+  // ── Ticker ────────────────────────────────────────────────────────────
   const tickerText = useMemo(() => {
     const cos = [...new Set(allJobs.map(j => j.company).filter(Boolean))];
     return cos.map(c => `· ${c}`).join('   ');
@@ -136,7 +142,7 @@ const IndexPage: React.FC = () => {
         <div className="view-tabs">
           <button
             className={`vtab${view === 'jobs' ? ' active' : ''}`}
-            onClick={() => setView('jobs')}
+            onClick={() => switchView('jobs')}
           >
             jobs {(jLoading || liLoading)
               ? '…'
@@ -146,7 +152,7 @@ const IndexPage: React.FC = () => {
           </button>
           <button
             className={`vtab${view === 'companies' ? ' active' : ''}`}
-            onClick={() => setView('companies')}
+            onClick={() => switchView('companies')}
           >
             companies {cLoading ? '…' : `(${filteredCompanies.length})`}
           </button>
@@ -176,7 +182,7 @@ const IndexPage: React.FC = () => {
       <div className="col-hdr">
         <span className="ch ch-idx">#</span>
         <span className="ch">company / {view === 'jobs' ? 'role' : 'sectors'}</span>
-        <span className="ch ch-desc">description excerpt <em>· click to expand &amp; scroll</em></span>
+        <span className="ch ch-desc">description <em>· tap to expand</em></span>
         <span className="ch ch-r">link / posted</span>
       </div>
 
@@ -184,7 +190,7 @@ const IndexPage: React.FC = () => {
       <div className="slide-outer">
         <div className={`slide-track${view === 'companies' ? ' show-co' : ''}`}>
 
-          {/* JOBS */}
+          {/* JOBS PANEL */}
           <div className="slide-panel">
             <div
               className="scroll-fade-wrap"
@@ -193,7 +199,7 @@ const IndexPage: React.FC = () => {
             >
               {loading ? (
                 <div className="loading-msg">
-                  <span className="loading-dot" />loading jobs from /uploads/ …
+                  <span className="loading-dot" />loading jobs…
                 </div>
               ) : filteredJobs.length === 0 ? (
                 <div className="empty-msg">
@@ -213,7 +219,8 @@ const IndexPage: React.FC = () => {
                   ))}
                   {visibleCount < filteredJobs.length && (
                     <div className="load-more-hint">
-                      <span className="loading-dot" style={{ display: 'inline-block', marginRight: 8 }} />
+                      <span className="loading-dot"
+                        style={{ display: 'inline-block', marginRight: 8 }} />
                       {visibleCount} / {filteredJobs.length} — scroll for more
                     </div>
                   )}
@@ -222,8 +229,8 @@ const IndexPage: React.FC = () => {
             </div>
           </div>
 
-          {/* COMPANIES */}
-          <div className="slide-panel">
+          {/* COMPANIES PANEL — keyed so it fully remounts on each visit */}
+          <div className="slide-panel" key={companiesKey}>
             <div className="scroll-fade-wrap">
               {cLoading ? (
                 <div className="loading-msg">

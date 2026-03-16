@@ -1,0 +1,149 @@
+/* ── LANDING PAGE ─────────────────────────────────────────────────────────── */
+.landing-root {
+  width: 100%;
+  height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle radial glow behind the brand */
+.landing-root::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  width: 480px;
+  height: 280px;
+  background: radial-gradient(ellipse at center,
+    rgba(0, 255, 65, 0.07) 0%,
+    transparent 70%);
+  pointer-events: none;
+}
+
+/* ── BRAND ────────────────────────────────────────────────────────────────── */
+.landing-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.landing-brand-text {
+  font-family: var(--syne);
+  font-size: clamp(52px, 12vw, 96px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #000;
+  background: var(--green);
+  padding: 10px 28px;
+  /* green box-glow matching hdr-brand */
+  box-shadow:
+    0 0 40px rgba(0, 255, 65, 0.55),
+    0 0 80px rgba(0, 255, 65, 0.22);
+  animation: brandPulse 4s ease-in-out infinite alternate;
+  user-select: none;
+}
+
+@keyframes brandPulse {
+  from { box-shadow: 0 0 30px rgba(0,255,65,0.45), 0 0 70px rgba(0,255,65,0.18); }
+  to   { box-shadow: 0 0 55px rgba(0,255,65,0.7),  0 0 110px rgba(0,255,65,0.3); }
+}
+
+/* ── ROTATING PHRASES ─────────────────────────────────────────────────────── */
+.landing-phrases {
+  height: 44px;         /* fixed height so layout never jumps between phrases */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 56px;
+}
+
+.landing-phrase {
+  font-family: var(--mono);
+  font-size: clamp(13px, 2.8vw, 20px);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: rgba(226, 232, 227, 0.55);
+  text-align: center;
+  margin: 0;
+  padding: 0 24px;
+  /* opacity transition is applied inline for variable duration */
+}
+
+/* ── CTA BUTTONS ──────────────────────────────────────────────────────────── */
+.landing-ctas {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.landing-btn {
+  font-family: var(--mono);
+  font-size: clamp(11px, 2vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  padding: 12px 32px;
+  cursor: pointer;
+  border: 1.5px solid;
+  background: transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ABOUT — dimmed/outline style */
+.landing-btn-about {
+  color: var(--dim);
+  border-color: rgba(226, 232, 227, 0.2);
+}
+.landing-btn-about:hover {
+  color: var(--white);
+  border-color: rgba(226, 232, 227, 0.5);
+  box-shadow: 0 0 20px rgba(226, 232, 227, 0.08);
+}
+
+/* SEARCH — green neon style matching the rest of the UI */
+.landing-btn-search {
+  color: var(--green);
+  border-color: rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 16px rgba(0, 255, 65, 0.12);
+}
+.landing-btn-search:hover {
+  color: #000;
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), 0 0 60px rgba(0, 255, 65, 0.2);
+}
+
+/* Subtle scan-line flicker on hover */
+.landing-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    transparent 0%,
+    rgba(255,255,255,0.03) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.landing-btn:hover::after { opacity: 1; }
+
+/* ── MOBILE ───────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .landing-brand-text  { font-size: clamp(42px, 16vw, 64px); padding: 8px 20px; }
+  .landing-phrase      { font-size: 12px; letter-spacing: 0.14em; }
+  .landing-ctas        { gap: 28px; }
+  .landing-btn         { font-size: 11px; padding: 10px 24px; letter-spacing: 0.18em; }
+  .landing-phrases     { margin-bottom: 44px; }
+  .landing-brand       { margin-bottom: 28px; }
+}

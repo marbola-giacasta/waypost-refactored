@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import './styles/variables.css';
 import './styles/globals.css';
+import './styles/landing.css';
 import './styles/header.css';
 import './styles/auth.css';
 import './styles/filters.css';

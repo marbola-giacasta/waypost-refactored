@@ -7,7 +7,7 @@ import { useLoadJobs }             from '../hooks/useLoadJobs';
 import { useLoadLinkedInJobs }     from '../hooks/useLoadLinkedInJobs';
 import { useLoadCompanies }        from '../hooks/useLoadCompanies';
 import { useFilteredData }         from '../hooks/useFilteredData';
-import type { SortKey }            from '../hooks/useFilteredData';
+import { FloatingFooter }           from '../components/Layout/FloatingFooter';
 
 type View = 'jobs' | 'companies';
 
@@ -260,6 +260,9 @@ const IndexPage: React.FC = () => {
 
         </div>
       </div>
+      {/* ── Floating footer ──────────────────────────────────────────── */}
+      <FloatingFooter />
+
     </div>
   );
 };

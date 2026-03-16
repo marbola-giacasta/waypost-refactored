@@ -58,13 +58,18 @@
 }
 
 .loc-pill {
-  font-size: 8.5px;
+  font-size: 7.5px;
   background: rgba(0, 255, 65, 0.08);
   border: 1px solid rgba(0, 255, 65, 0.2);
   color: var(--green);
-  padding: 1px 6px;
-  letter-spacing: 0.08em;
-  flex-shrink: 0;
+  padding: 1px 5px;
+  letter-spacing: 0.06em;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
 }
 
 /* Source badge */

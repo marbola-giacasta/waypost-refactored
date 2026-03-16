@@ -6,11 +6,10 @@ import type {
 import { translateText } from '../services/translate';
 
 export interface Filters {
-  company:    string;
-  role:       string;
-  location:   string;
-  department: string;
-  keyword:    string;
+  company:  string;
+  role:     string;
+  location: string;
+  keyword:  string;
 }
 
 export type SortKey = 'date' | 'title' | 'company' | 'location';
@@ -53,8 +52,6 @@ function jobMatchesFilters(
     (!filters.company  || job.company.toLowerCase().includes(filters.company.toLowerCase()))  &&
     (!filters.role     || job.title.toLowerCase().includes(filters.role.toLowerCase()))        &&
     (!filters.location || job.location.toLowerCase().includes(filters.location.toLowerCase())) &&
-    // department filter — LinkedIn jobs have no department field, so skip gracefully
-    (!filters.department) &&
     (!kw || (
       desc.toLowerCase().includes(kw) ||
       job.title.toLowerCase().includes(kw) ||

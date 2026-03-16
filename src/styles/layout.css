@@ -33,31 +33,28 @@
   position: relative;
 }
 
-/* Scroll area with bottom fade */
+/* Scroll area */
 .scroll-fade-wrap {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  /* iOS momentum scrolling */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  /* Extra padding so last card clears home-bar on iPhone */
-  padding-bottom: calc(120px + var(--safe-bottom));
+  padding-bottom: calc(80px + var(--safe-bottom));
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 255, 65, 0.2) transparent;
-  position: relative;
+  /* No position:relative needed — removes stacking context that caused the overlay glitch */
 }
-/* Bottom fade overlay */
-.scroll-fade-wrap::after {
+/* Subtle bottom fade — only on the scroll container's parent wrapper so it
+   doesn't scroll with content and never obscures mid-list cards */
+.slide-panel::after {
   content: '';
-  position: sticky;
-  display: block;
-  bottom: 0;
-  left: 0; right: 0;
-  height: 80px;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
   background: linear-gradient(to bottom, transparent, var(--bg));
   pointer-events: none;
-  margin-top: -80px;
+  z-index: 2;
 }
 
 /* ── STATES ─────────────────────────────────────────────────────────────── */
@@ -92,4 +89,22 @@
   font-size: 12px;
   letter-spacing: 0.12em;
 }
-.empty-glyph { font-size: 44px; color: rgba(0, 255, 65, 0.12); }
+.load-more-hint {
+  text-align: center;
+  padding: 20px 0 8px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--dim3);
+}
+.load-more-hint.done { color: rgba(0,255,65,0.25); }
+
+/* Shown below the last rendered item when more exist */
+.load-more-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0 40px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--dim3);
+}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Header                      from './NAVs/Header';
 import { JobItem }                 from '../components/Jobs/JobItem';
 import { CompanyItem }             from '../components/Companies/CompanyItem';
@@ -11,23 +11,24 @@ import type { SortKey }            from '../hooks/useFilteredData';
 
 type View = 'jobs' | 'companies';
 
-const IndexPage: React.FC = () => {
-  const [view, setView]   = useState<View>('jobs');
+const PAGE_SIZE = 200; // items to render at a time
 
-  // Filters
+const IndexPage: React.FC = () => {
+  const [view, setView] = useState<View>('jobs');
+
+  // ── Filters ────────────────────────────────────────────────────────────
   const [filters, setFilters] = useState({
-    company:    '',
-    role:       '',
-    location:   '',
-    department: '',
-    keyword:    '',
+    company:  '',
+    role:     '',
+    location: '',
+    keyword:  '',
   });
   const setF = (k: keyof typeof filters, v: string) =>
     setFilters(f => ({ ...f, [k]: v }));
   const clearFilters = () =>
-    setFilters({ company: '', role: '', location: '', department: '', keyword: '' });
+    setFilters({ company: '', role: '', location: '', keyword: '' });
 
-  // Sort
+  // ── Sort ───────────────────────────────────────────────────────────────
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortAsc, setSortAsc] = useState(false);
   const setSort = (k: SortKey) => {
@@ -35,15 +36,14 @@ const IndexPage: React.FC = () => {
     else { setSortKey(k); setSortAsc(k !== 'date'); }
   };
 
-  // Translation
+  // ── Translation ────────────────────────────────────────────────────────
   const [targetLang, setTargetLang] = useState('no');
 
-  // Data — load both sources; neither blocks the other
-  const { jobs: scraperJobs,   loading: jLoading }  = useLoadJobs();
-  const { jobs: linkedInJobs,  loading: liLoading }  = useLoadLinkedInJobs();
-  const { companies,           loading: cLoading }   = useLoadCompanies();
+  // ── Data ───────────────────────────────────────────────────────────────
+  const { jobs: scraperJobs,  loading: jLoading }  = useLoadJobs();
+  const { jobs: linkedInJobs, loading: liLoading }  = useLoadLinkedInJobs();
+  const { companies,          loading: cLoading }   = useLoadCompanies();
 
-  // Merge and re-sort by date (most recent first)
   const allJobs = useMemo(() => {
     const merged = [...scraperJobs, ...linkedInJobs];
     return merged.sort(
@@ -51,25 +51,60 @@ const IndexPage: React.FC = () => {
     );
   }, [scraperJobs, linkedInJobs]);
 
+  // useFilteredData operates on the FULL dataset — always
   const { filteredJobs, filteredCompanies } = useFilteredData(
     allJobs, companies, filters, sortKey, sortAsc, targetLang,
   );
 
-  // Ticker text built from unique company names across both sources
+  // ── Windowed rendering ─────────────────────────────────────────────────
+  // `visibleCount` controls how many DOM nodes are rendered.
+  // The full filteredJobs array is always in memory for filtering.
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Reset window whenever filters/sort produce a new result set
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filteredJobs]);
+
+  // IntersectionObserver: when the sentinel div at list bottom comes into view,
+  // load the next PAGE_SIZE items
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount(n => Math.min(n + PAGE_SIZE, filteredJobs.length));
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [filteredJobs.length]);
+
+  const visibleJobs = useMemo(
+    () => filteredJobs.slice(0, visibleCount),
+    [filteredJobs, visibleCount],
+  );
+
+  // ── Ticker ─────────────────────────────────────────────────────────────
   const tickerText = useMemo(() => {
     const cos = [...new Set(allJobs.map(j => j.company).filter(Boolean))];
     return cos.map(c => `· ${c}`).join('   ');
   }, [allJobs]);
 
-  const loading   = view === 'jobs' ? (jLoading || liLoading) : cLoading;
-  const count     = view === 'jobs' ? filteredJobs.length : filteredCompanies.length;
+  const loading = view === 'jobs' ? (jLoading || liLoading) : cLoading;
+  const count   = view === 'jobs' ? filteredJobs.length : filteredCompanies.length;
 
   return (
     <div className="page-root">
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+
+      {/* ── Header ───────────────────────────────────────────────────── */}
       <Header tickerText={tickerText} resultCount={count} />
 
-      {/* ── Filters bar ────────────────────────────────────────────────── */}
+      {/* ── Filters bar ──────────────────────────────────────────────── */}
       <div className="filters-bar">
         <div className="fg">
           <label className="flbl">Company</label>
@@ -91,14 +126,6 @@ const IndexPage: React.FC = () => {
             onChange={e => setF('location', e.target.value)} />
         </div>
 
-        {view === 'jobs' && (
-          <div className="fg">
-            <label className="flbl">Department</label>
-            <input className="fi" placeholder="e.g. IT" value={filters.department}
-              onChange={e => setF('department', e.target.value)} />
-          </div>
-        )}
-
         <div className="fg">
           <label className="flbl">Keyword</label>
           <input className="fi kw" placeholder="any word…" value={filters.keyword}
@@ -112,9 +139,8 @@ const IndexPage: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Meta / sort bar ────────────────────────────────────────────── */}
+      {/* ── Meta / sort bar ──────────────────────────────────────────── */}
       <div className="meta-bar">
-        {/* View toggle — jobs ←→ companies */}
         <div className="view-tabs">
           <button
             className={`vtab${view === 'jobs' ? ' active' : ''}`}
@@ -130,14 +156,10 @@ const IndexPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Keyword active indicator */}
         {filters.keyword && (
-          <span className="kw-active">
-            kw: &quot;{filters.keyword}&quot;
-          </span>
+          <span className="kw-active">kw: &quot;{filters.keyword}&quot;</span>
         )}
 
-        {/* Sort (jobs only) */}
         {view === 'jobs' && (
           <div className="sorts">
             <span className="sort-lbl">SORT:</span>
@@ -154,15 +176,15 @@ const IndexPage: React.FC = () => {
         )}
       </div>
 
-      {/* ── Column headers ─────────────────────────────────────────────── */}
+      {/* ── Column headers ───────────────────────────────────────────── */}
       <div className="col-hdr">
         <span className="ch ch-idx">#</span>
         <span className="ch">company / {view === 'jobs' ? 'role' : 'sectors'}</span>
-        <span className="ch ch-desc">description excerpt <em>· click to expand</em></span>
+        <span className="ch ch-desc">description excerpt <em>· click to expand &amp; scroll</em></span>
         <span className="ch ch-r">link / posted</span>
       </div>
 
-      {/* ── Slide wrapper — jobs | companies ─────────────────────────── */}
+      {/* ── Slide wrapper ────────────────────────────────────────────── */}
       <div className="slide-outer">
         <div className={`slide-track${view === 'companies' ? ' show-co' : ''}`}>
 
@@ -180,7 +202,7 @@ const IndexPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="job-list">
-                  {filteredJobs.map((job, i) => (
+                  {visibleJobs.map((job, i) => (
                     <JobItem
                       key={`${job.company}-${job.title}-${i}`}
                       job={job}
@@ -189,6 +211,17 @@ const IndexPage: React.FC = () => {
                       index={i}
                     />
                   ))}
+
+                  {/* Sentinel div — observed to trigger loading more items */}
+                  <div ref={sentinelRef} style={{ height: 1 }} />
+
+                  {/* Load-more indicator */}
+                  {visibleCount < filteredJobs.length && (
+                    <div className="load-more-hint">
+                      <span className="loading-dot" />
+                      {visibleCount} / {filteredJobs.length} — scroll for more
+                    </div>
+                  )}
                 </div>
               )}
             </div>

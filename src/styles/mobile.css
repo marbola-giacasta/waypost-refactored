@@ -106,17 +106,22 @@
     padding-right: calc(14px + var(--safe-right));
   }
   .hdr-brand        { font-size: 15px; padding: 4px 10px; }
-  .hdr-pipe         { margin: 0 10px; }
-  /* Restore the vertical marquee — it fits nicely on tablet */
-  .hdr-marquee-wrap { display: flex; }
-  /* Hide the horizontal company ticker — too wide for mobile */
+  .hdr-pipe         { margin: 0 8px; }
+  /* Show the vertical marquee on tablet — there's room */
+  .hdr-marquee-wrap { display: flex !important; }
   .hdr-ticker-wrap  { display: none; }
   .hdr-count        { display: none; }
 
-  /* Auth buttons — slightly smaller on mobile */
+  /* Auth: tighter but still readable */
   .auth-label         { font-size: 10px; letter-spacing: 0.1em; }
-  .auth-fields.visible{ max-width: 300px; }
-  .auth-fields input  { width: 88px; font-size: 11px; }
+  .auth-fields.visible{ max-width: 280px; }
+  .auth-fields input  { width: 80px; font-size: 11px; }
+
+  /* ── GAP between filter bar bottom and list top ─────────────────────── */
+  .meta-bar {
+    border-top: 1px solid rgba(0,255,65,0.08);
+    margin-top: 2px;
+  }
 
   /* ── JOB CARD: 3-col grid ────────────────────────────────────────────── */
   .job-entry { grid-template-columns: 28px 1fr 96px; }
@@ -138,15 +143,21 @@
 /* ── PHONE PORTRAIT (≤ 480px) ───────────────────────────────────────────── */
 @media (max-width: 480px) {
 
-  /* HEADER */
+  /* HEADER — small phones */
   .hdr-brand { font-size: 14px; padding: 4px 9px; }
-  /* Hide marquee on tiny phones — not enough room */
-  .hdr-marquee-wrap { display: none; }
+  .hdr-marquee-wrap { display: flex !important; }
   .auth-sep         { display: none; }
-  .auth-row         { gap: 8px; }
+  .auth-row         { gap: 6px; }
   .auth-label       { font-size: 10px; }
-  .auth-fields.visible { max-width: 220px; flex-wrap: wrap; gap: 4px; }
-  .auth-fields input   { width: 74px; font-size: 10px; padding: 4px 6px; }
+  .auth-fields.visible {
+    max-width: 200px;
+    flex-wrap: nowrap;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .auth-fields input   { width: 68px; font-size: 10px; padding: 4px 6px; }
+  .auth-toggle-wrap    { flex-shrink: 0; }
+  .auth-toggle-wrap input { width: 68px !important; padding-right: 22px !important; }
 
   /* FILTER BAR — still flex-wrap, slightly tighter */
   .filters-bar {
@@ -212,7 +223,9 @@
   .auth-label   { font-size: 9.5px; letter-spacing: 0.08em; }
   .jc-link      { font-size: 8.5px; padding: 3px 6px; }
   .fi           { font-size: 10px; }
-  .auth-fields input { width: 66px; }
+  .auth-fields input { width: 62px; }
+  /* On the narrowest phones hide the marquee to make room for auth buttons */
+  .hdr-marquee-wrap { display: none !important; }
 }
 
 

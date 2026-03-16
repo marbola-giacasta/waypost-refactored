@@ -93,7 +93,7 @@
   cursor: pointer;
   border: 1.5px solid;
   background: transparent;
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
@@ -140,10 +140,10 @@
 
 /* ── MOBILE ───────────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .landing-brand-text  { font-size: clamp(42px, 16vw, 64px); padding: 8px 20px; }
-  .landing-phrase      { font-size: 12px; letter-spacing: 0.14em; }
-  .landing-ctas        { gap: 28px; }
-  .landing-btn         { font-size: 11px; padding: 10px 24px; letter-spacing: 0.18em; }
-  .landing-phrases     { margin-bottom: 44px; }
-  .landing-brand       { margin-bottom: 28px; }
+  .landing-brand-text  { font-size: clamp(32px, 11vw, 48px); padding: 7px 16px; }
+  .landing-phrase      { font-size: 12px; letter-spacing: 0.12em; }
+  .landing-ctas        { gap: 20px; }
+  .landing-btn         { font-size: 10px; padding: 10px 20px; letter-spacing: 0.16em; }
+  .landing-phrases     { margin-bottom: 40px; }
+  .landing-brand       { margin-bottom: 24px; }
 }

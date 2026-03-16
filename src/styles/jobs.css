@@ -67,7 +67,7 @@
   flex-shrink: 0;
 }
 
-/* Source badge — tiny pill showing where the job came from */
+/* Source badge */
 .src-badge {
   font-size: 7.5px;
   letter-spacing: 0.12em;
@@ -76,8 +76,8 @@
   text-transform: uppercase;
   border: 1px solid;
 }
-.src-badge.scraper  { color: rgba(0,255,65,0.45);  border-color: rgba(0,255,65,0.2);  }
-.src-badge.linkedin { color: rgba(56,189,248,0.6);  border-color: rgba(56,189,248,0.25); }
+.src-badge.scraper  { color: rgba(0,255,65,0.45); border-color: rgba(0,255,65,0.2); }
+.src-badge.linkedin { color: rgba(0,255,65,0.45); border-color: rgba(0,255,65,0.2); }
 
 .jc-title {
   font-family: var(--syne);
@@ -219,3 +219,76 @@
   animation: pulse 1s infinite alternate;
 }
 @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
+
+/* ── RIGHT COL: link + time ─────────────────────────────────────────────── */
+.jc-right {
+  padding: 13px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  border-right: 1px solid rgba(0, 255, 65, 0.05);
+  overflow: hidden;
+}
+
+/* All links: consistent green regardless of source */
+.jc-link {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 255, 65, 0.28);
+  letter-spacing: 0.08em;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.jc-link:hover {
+  background: var(--green);
+  color: #000;
+  box-shadow: 0 0 14px rgba(0, 255, 65, 0.35);
+}
+
+/* Time: red "ago" + small grey date */
+.jc-time {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.jc-time .ago      { font-size: 10px; color: var(--red); letter-spacing: 0.07em; font-weight: 600; }
+.jc-time .date-sub { font-size: 8px;  color: var(--dim3); }
+
+/* Scraped column (hidden on mobile) */
+.jc-scraped {
+  padding: 13px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.scraped-txt {
+  font-size: 8px;
+  color: var(--dim3);
+  text-align: right;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+}
+
+/* Company news ticker */
+.co-news-ticker { width: 100%; overflow: hidden; height: 16px; position: relative; }
+.co-news-inner  {
+  font-size: 9px; color: var(--dim3); white-space: nowrap;
+  letter-spacing: 0.1em; animation: coTicker 18s linear infinite;
+}
+@keyframes coTicker { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+/* Description text justify in drawer */
+.job-desc-drawer { text-align: justify; }
+
+/* Load-more footer */
+.load-more-hint {
+  text-align: center; padding: 16px 0 6px;
+  font-size: 10px; letter-spacing: 0.12em; color: var(--dim3);
+}
+.load-more-hint.done { color: rgba(0,255,65,0.25); }

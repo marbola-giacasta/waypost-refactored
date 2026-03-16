@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import type { ParsedCompanyWithTranslation } from '../../utils/constants';
 import { Highlight } from '../Filters/Highlight';
 
@@ -11,66 +11,115 @@ interface Props {
 
 export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLang, index }) => {
   const [expanded, setExpanded] = useState(false);
-  const desc = company._translatedDesc ?? company.Panoramica ?? '';
+  const descRef   = useRef<HTMLDivElement>(null);
+  const pointerY  = useRef<number>(0);
+  const didScroll = useRef(false);
+
+  const desc    = company._translatedDesc ?? company.Panoramica ?? '';
   const sectors = company['Settori di competenza'] ?? '';
 
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    pointerY.current  = e.clientY;
+    didScroll.current = false;
+  }, []);
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    if (Math.abs(e.clientY - pointerY.current) > 8) didScroll.current = true;
+  }, []);
+
+  const handleCardClick = useCallback(() => {
+    if (didScroll.current) { didScroll.current = false; return; }
+    setExpanded(v => !v);
+  }, []);
+
+  const handleDrawerClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (didScroll.current) { didScroll.current = false; return; }
+    const el = descRef.current;
+    if (el && el.scrollTop > 6) return;
+    setExpanded(false);
+  }, []);
+
+  const handleCollapse = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (descRef.current) descRef.current.scrollTop = 0;
+    setExpanded(false);
+  }, []);
+
   return (
-    <div className="job-entry" style={{ '--stagger': index } as React.CSSProperties}>
+    <div className={`job-entry-wrap${expanded ? ' expanded' : ''}`}>
 
-      <div className="jc-idx">{index + 1}</div>
+      {/* ── Card row ── */}
+      <div
+        className={`job-entry${expanded ? ' is-expanded' : ''}`}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onClick={handleCardClick}
+      >
+        <div className="jc-idx">{index + 1}</div>
 
-      <div className="jc-main">
-        <div className="jc-company">
-          <Highlight text={company['Company Name']} kw={filtersKeyword} lang={targetLang} />
-          {company._sourceFile && (
-            <span className="loc-pill">{company._sourceFile}</span>
+        <div className="jc-main">
+          <div className="jc-company">
+            <Highlight text={company['Company Name']} kw={filtersKeyword} lang={targetLang} />
+            {company._sourceFile && (
+              <span className="loc-pill">{company._sourceFile}</span>
+            )}
+          </div>
+          <div className="jc-title company-sectors">
+            {sectors || 'Various sectors'}
+          </div>
+        </div>
+
+        {/* Description preview (desktop only — 2-line teaser) */}
+        <div className="jc-desc-preview">
+          {desc
+            ? <Highlight text={desc.slice(0, 200)} kw={filtersKeyword} lang={targetLang} />
+            : <span className="no-desc">—</span>}
+          <span className="expand-hint">↕</span>
+        </div>
+
+        {/* Links */}
+        <div className="jc-right">
+          {company.Website && (
+            <a
+              className="jc-link"
+              href={company.Website.startsWith('http') ? company.Website : `https://${company.Website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+            >
+              website ↗
+            </a>
+          )}
+          {company['LinkedIn URL'] && (
+            <a
+              className="jc-link"
+              href={company['LinkedIn URL']}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+            >
+              linkedin ↗
+            </a>
           )}
         </div>
-        <div className="jc-title company-sectors">
-          {sectors || 'Various sectors'}
+      </div>
+
+      {/* ── Description drawer — identical mechanism to JobItem ── */}
+      {expanded && (
+        <div
+          className="job-desc-drawer"
+          ref={descRef}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onClick={handleDrawerClick}
+        >
+          <button className="desc-close" onClick={handleCollapse}>✕ close</button>
+          {desc
+            ? <Highlight text={desc} kw={filtersKeyword} lang={targetLang} />
+            : <span className="no-desc">no description available</span>}
         </div>
-      </div>
+      )}
 
-      <div
-        className={`jc-desc${expanded ? ' expanded' : ''}`}
-        onClick={() => setExpanded(v => !v)}
-        title="click to expand"
-      >
-        {desc
-          ? <Highlight text={desc.slice(0, 700)} kw={filtersKeyword} lang={targetLang} />
-          : <span className="no-desc">no description available</span>}
-        {!expanded && <span className="expand-hint">↕</span>}
-      </div>
-
-      <div className="jc-right">
-        {company.Website && (
-          <a
-            className="jc-link"
-            href={company.Website.startsWith('http') ? company.Website : `https://${company.Website}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            website ↗
-          </a>
-        )}
-        {company['LinkedIn URL'] && (
-          <a
-            className="jc-link linkedin"
-            href={company['LinkedIn URL']}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            linkedin ↗
-          </a>
-        )}
-        {company['Latest News'] && (
-          <div className="co-news-ticker">
-            <div className="co-news-inner">{company['Latest News']}</div>
-          </div>
-        )}
-      </div>
-
-      <div className="jc-scraped" />
     </div>
   );
 };

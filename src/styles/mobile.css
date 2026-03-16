@@ -1,11 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    MOBILE — waypost v2
+   Strategy: flex-column page layout so filter bar height is always auto.
+   Header uses TWO rows on mobile — row1 (brand+marquee) + row2 (auth).
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── TABLET + LARGE PHONE (≤ 860px) ────────────────────────────────────── */
+/* ── TABLET + PHONE (≤ 860px) ───────────────────────────────────────────── */
 @media (max-width: 860px) {
 
-  /* ── PAGE ROOT: flex column ─────────────────────────────────────────── */
+  /* ── Variables ───────────────────────────────────────────────────────── */
+  :root {
+    --hdr-row1-h:  52px;   /* row 1: WAYPOST brand + marquee */
+    --hdr-row2-h:  42px;   /* row 2: LOGIN | REGISTER (or logged-in user) */
+    --hdr-h:       94px;   /* total header = row1 + row2 (used for page offset) */
+  }
+
+  /* ── PAGE ROOT ───────────────────────────────────────────────────────── */
   .page-root {
     display: flex;
     flex-direction: column;
@@ -14,53 +23,52 @@
     overflow: hidden;
   }
 
-  /* ── HEADER: 2-row layout ───────────────────────────────────────────── */
+  /* ── HEADER: tall enough for both rows ───────────────────────────────── */
   .hdr {
-    height: calc(var(--hdr-h) + var(--safe-top));
+    height: calc(var(--hdr-h) + var(--safe-top)) !important;
     padding-left:  calc(14px + var(--safe-left));
     padding-right: calc(14px + var(--safe-right));
+    overflow: visible;       /* let both rows show */
   }
 
-  /* Row 1: brand + marquee (full width) */
+  /* Row 1: brand + marquee (full width, marquee takes remaining space) */
   .hdr-row1 {
-    height: var(--hdr-h);
-    padding: 0; /* inherited from .hdr on mobile */
-    padding-left: 0;
-    padding-right: 0;
+    height: var(--hdr-row1-h);
+    padding: 0;              /* row handles its own spacing via hdr padding */
+    gap: 10px;
   }
-  .hdr-brand        { font-size: 15px; padding: 4px 10px; }
-  .hdr-pipe         { margin: 0 10px; }
+  .hdr-brand        { font-size: 15px; padding: 4px 10px; flex-shrink: 0; }
+  .hdr-pipe         { margin: 0 8px; display: none; }   /* remove pipe on mobile */
+  /* Marquee fills all remaining row-1 space */
   .hdr-marquee-wrap { display: flex !important; flex: 1; }
-  .hdr-spacer       { display: none; }         /* no spacer — marquee takes all space */
-  .hdr-right-desktop { display: none; }        /* auth lives in row 2 on mobile */
+  /* Hide desktop-only elements in row1 */
+  .hdr-spacer            { display: none; }
+  .hdr-right-desktop     { display: none; }
 
-  /* Row 2: auth buttons, full-width, evenly spaced */
+  /* Row 2: auth buttons — LOGIN (left) | (center) REGISTER (right) */
   .hdr-row2-mobile {
     display: flex !important;
     align-items: center;
-    justify-content: space-between;
-    padding: 6px 14px 8px;
-    border-top: 1px solid rgba(0,255,65,0.08);
-    flex-shrink: 0;
+    height: var(--hdr-row2-h);
+    padding: 0 14px;
+    border-top: 1px solid rgba(0,255,65,0.1);
   }
-  /* Auth forms expand horizontally within the row */
-  .hdr-row2-mobile .auth-form     { flex: 1; }
-  .hdr-row2-mobile .auth-row      { width: 100%; justify-content: space-between; }
-  .hdr-row2-mobile .auth-sep      { margin: 0 auto; }
+  .hdr-row2-mobile .auth-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .hdr-row2-mobile .auth-sep      { flex: 1; text-align: center; }
+  .hdr-row2-mobile .auth-form     { flex: 0 0 auto; }
   .hdr-row2-mobile .auth-label    { font-size: 11px; letter-spacing: 0.14em; }
   .hdr-row2-mobile .auth-fields.visible {
-    max-width: 300px;
-    flex-wrap: nowrap;
-    gap: 6px;
+    max-width: 300px; flex-wrap: nowrap; gap: 5px;
   }
-  .hdr-row2-mobile .auth-fields input { width: 86px; font-size: 11px; }
+  .hdr-row2-mobile .auth-fields input { width: 82px; font-size: 11px; }
   .hdr-row2-mobile .hdr-username  { font-size: 12px; }
 
-  /* Taller header to fit both rows */
-  :root { --hdr-h: 56px; }
-  .page-root { padding-top: calc(var(--hdr-h) + 38px + var(--safe-top)); }
-
-  /* ── FILTERS BAR: natural-height flex-wrap ──────────────────────────── */
+  /* ── FILTERS BAR: relative, auto-height, flex-wrap ───────────────────── */
   .filters-bar {
     position: relative !important;
     top: auto !important;
@@ -81,7 +89,7 @@
   .fclear        { flex: 0 0 auto; align-self: flex-end; padding: 6px 12px; }
   .fbar-right    { flex: 0 0 auto; margin-left: auto; align-self: flex-end; }
 
-  /* ── META BAR ───────────────────────────────────────────────────────── */
+  /* ── META BAR: relative, natural height ──────────────────────────────── */
   .meta-bar {
     position: relative !important;
     top: auto !important;
@@ -89,15 +97,15 @@
     flex-shrink: 0;
     padding: 0 calc(14px + var(--safe-left));
     gap: 10px;
-    border-top: 1px solid rgba(0,255,65,0.06);
+    border-top: 1px solid rgba(0,255,65,0.08);
   }
   .sort-lbl { display: none; }
   .sbtn     { padding: 3px 7px; font-size: 9px; }
 
-  /* ── COLUMN HEADER: hidden on mobile ────────────────────────────────── */
+  /* ── COLUMN HEADER: hidden on mobile ─────────────────────────────────── */
   .col-hdr { display: none !important; }
 
-  /* ── SLIDE OUTER: fill remaining height ─────────────────────────────── */
+  /* ── SLIDE OUTER: fill remaining height ──────────────────────────────── */
   .slide-outer {
     position: relative !important;
     top: auto !important; left: auto !important;
@@ -106,29 +114,22 @@
     min-height: 0;
     overflow: hidden;
   }
-  .slide-track { will-change: transform; }
-
-  /* ── JOB CARD: 3-col (no desc column) ──────────────────────────────── */
-  .job-entry         { grid-template-columns: 28px 1fr 96px; }
-  .jc-desc-preview   { display: none; }  /* preview hidden — drawer used instead */
-  .jc-main           { padding: 12px 10px 12px 10px; }
-  .jc-right          { padding: 12px 8px; }
-  .jc-title          { font-size: 12.5px; }
-  .jc-company        { font-size: 10px; }
-
-  /* ── DRAWER: full-width on mobile ───────────────────────────────────── */
-  .job-desc-drawer {
-    margin: 0;
-    padding: 12px 16px;
-    font-size: 11.5px;
-    border-left: none;
-    border-top: 1px solid rgba(0,255,65,0.1);
+  .slide-track {
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
-  /* ── JOB LIST ────────────────────────────────────────────────────────── */
-  .job-list { padding: 0 calc(14px + var(--safe-left)); }
+  /* ── JOB CARDS: 3-col (no description column on tablet) ─────────────── */
+  .job-entry { grid-template-columns: 28px 1fr 96px; }
+  .jc-desc-preview { display: none; }
+  .jc-main   { padding: 12px 10px 12px 10px; }
+  .jc-right  { padding: 12px 8px; }
+  .jc-title  { font-size: 12.5px; }
+  .jc-company{ font-size: 10px; }
+  .job-list  { padding: 0 calc(14px + var(--safe-left)); }
 
-  /* ── TRANSLATION DROPDOWN ────────────────────────────────────────────── */
+  /* Translation dropdown */
   .trans-trigger  { font-size: 9px; padding: 5px 8px; gap: 5px; }
   .trans-dropdown { right: 0; min-width: 140px; }
 }
@@ -137,113 +138,90 @@
 /* ── PHONE PORTRAIT (≤ 480px) ───────────────────────────────────────────── */
 @media (max-width: 480px) {
 
-  /* HEADER rows */
-  .hdr-brand { font-size: 14px; padding: 4px 9px; }
-  .hdr-row2-mobile { padding: 5px 12px 7px; }
-  .hdr-row2-mobile .auth-label  { font-size: 10px; }
-  .hdr-row2-mobile .auth-fields.visible { max-width: 240px; }
-  .hdr-row2-mobile .auth-fields input   { width: 72px; font-size: 10px; padding: 4px 6px; }
-
-  /* FILTER BAR */
-  .filters-bar {
-    gap: 7px 8px;
-    padding: 9px calc(12px + var(--safe-left)) 9px calc(12px + var(--safe-right));
+  :root {
+    --hdr-row1-h: 48px;
+    --hdr-row2-h: 40px;
+    --hdr-h:      88px;
   }
-  .fi   { font-size: 10.5px; }
-  .flbl { font-size: 7px; }
 
-  /* META BAR */
+  .hdr-brand { font-size: 14px; padding: 4px 9px; }
+  .hdr-row2-mobile .auth-label   { font-size: 10px; }
+  .hdr-row2-mobile .auth-fields.visible { max-width: 220px; }
+  .hdr-row2-mobile .auth-fields input   { width: 70px; font-size: 10px; padding: 4px 6px; }
+  .auth-toggle-wrap input               { width: 70px !important; }
+
+  .filters-bar { gap: 7px 8px; padding: 9px 12px; }
+  .fi          { font-size: 10.5px; }
+  .flbl        { font-size: 7px; }
+
   .sorts     { display: none; }
   .vtab      { padding: 4px 10px; font-size: 9px; letter-spacing: 0.08em; }
-  .kw-active { font-size: 9px; padding: 2px 7px;
-               max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kw-active { font-size: 9px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* CARD: flex row */
+  /* Phone card: flex row (no grid) */
   .job-entry {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     padding: 12px 0;
-    border-bottom: none;
     grid-template-columns: unset;
   }
-  .job-entry.is-expanded {
-    border-bottom: none !important;
-    border-bottom: 1px solid rgba(0,255,65,0.1) !important;
-  }
-  .jc-idx {
-    width: 22px; min-width: 22px; padding-top: 2px;
-    font-size: 8px; border-right: none; justify-content: center;
-  }
-  .jc-main {
-    flex: 1; padding: 0 8px 0 6px; gap: 4px; border-right: none;
-  }
-  .jc-company   { font-size: 9px; }
-  .loc-pill     { font-size: 7.5px; padding: 1px 5px; }
-  .src-badge    { font-size: 7px; padding: 1px 4px; }
-  .jc-title     { font-size: 13px; line-height: 1.3; }
-  .jc-right {
-    min-width: 72px; padding: 0 0 0 4px;
-    align-items: flex-end; justify-content: flex-start;
-    gap: 6px; border-right: none;
-  }
+  .jc-idx   { width: 22px; min-width: 22px; padding-top: 2px; border-right: none; justify-content: center; }
+  .jc-main  { flex: 1; padding: 0 8px 0 6px; gap: 4px; border-right: none; }
+  .jc-right { min-width: 72px; padding: 0 0 0 4px; align-items: flex-end; justify-content: flex-start; gap: 6px; border-right: none; }
   .jc-link           { font-size: 9px; padding: 3px 7px; }
   .jc-time .ago      { font-size: 9px; }
   .jc-time .date-sub { font-size: 7.5px; }
   .job-list { padding: 0 12px; }
-
-  /* DRAWER: compact on small phones */
-  .job-desc-drawer { max-height: 260px; font-size: 11px; padding: 10px 14px; }
 }
 
 
 /* ── VERY SMALL (≤ 360px) ───────────────────────────────────────────────── */
 @media (max-width: 360px) {
+  :root { --hdr-row1-h: 46px; --hdr-row2-h: 38px; --hdr-h: 84px; }
   .hdr-brand    { font-size: 13px; padding: 3px 8px; }
-  .hdr-marquee-wrap { display: none !important; }
-  .auth-label   { font-size: 9.5px; letter-spacing: 0.08em; }
+  .auth-label   { font-size: 9.5px; }
   .jc-link      { font-size: 8.5px; padding: 3px 6px; }
   .fi           { font-size: 10px; }
-  .hdr-row2-mobile .auth-fields input { width: 62px; }
+  .hdr-row2-mobile .auth-fields input { width: 60px; }
 }
 
 
 /* ── LANDSCAPE PHONE (height ≤ 450px) ───────────────────────────────────── */
 @media (max-height: 450px) and (orientation: landscape) {
-  .page-root { padding-top: calc(44px + var(--safe-top)); }
-  .hdr       { height: calc(44px + var(--safe-top)); }
-  .hdr-row1  { height: 44px; }
-  .hdr-row2-mobile { display: none !important; }   /* no room in landscape */
-  .hdr-right-desktop { display: flex !important; } /* show inline instead */
+  :root { --hdr-row1-h: 44px; --hdr-row2-h: 0px; --hdr-h: 44px; }
+  .hdr-row2-mobile   { display: none !important; }
+  .hdr-right-desktop { display: flex !important; }
+  .hdr-spacer        { display: flex !important; }
   .filters-bar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-wrap: nowrap; overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 6px calc(12px + var(--safe-left));
-    gap: 8px;
+    padding: 6px 12px; gap: 8px;
   }
-  .fg              { flex: 0 0 auto; }
-  .fg:has(.fi.kw)  { flex: 0 0 auto; }
-  .fi              { width: 110px; }
-  .fi.kw           { width: 150px; }
-  .fbar-right      { margin-left: auto; }
+  .fg             { flex: 0 0 auto; }
+  .fi             { width: 110px; }
+  .fi.kw          { width: 150px; }
+  .fg:has(.fi.kw) { flex: 0 0 auto; }
   .job-entry {
-    display: grid; grid-template-columns: 24px 1fr 90px;
+    display: grid;
+    grid-template-columns: 24px 1fr 90px;
     flex-direction: unset;
   }
+  .jc-main  { padding: 8px 10px; }
+  .jc-right { padding: 8px 6px; }
 }
 
 
-/* ── IPAD PORTRAIT (768–860px) — show description preview ───────────────── */
+/* ── IPAD PORTRAIT (768–860px) ───────────────────────────────────────────── */
 @media (min-width: 768px) and (max-width: 860px) {
-  .col-hdr       { display: grid !important; }
-  .jc-desc-preview { display: block; }
+  .col-hdr { display: grid !important; }
+  .jc-desc-preview { display: block !important; }
   .job-entry { grid-template-columns: 28px 1.4fr 1.2fr 100px; }
   .col-hdr   { grid-template-columns: 28px 1.4fr 1.2fr 100px; }
 }
 
 
-/* ── PREVENT iOS ZOOM ON INPUT FOCUS ───────────────────────────────────── */
+/* ── iOS ZOOM PREVENTION ────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .fi:focus,
   .auth-fields input:focus { font-size: 16px !important; }

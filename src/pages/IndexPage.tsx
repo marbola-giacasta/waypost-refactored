@@ -11,7 +11,7 @@ import type { SortKey }            from '../hooks/useFilteredData';
 
 type View = 'jobs' | 'companies';
 
-const PAGE_SIZE = 200; // items to render at a time
+const PAGE_SIZE = 50; // Start small — loads more as user scrolls
 
 const IndexPage: React.FC = () => {
   const [view, setView] = useState<View>('jobs');
@@ -71,7 +71,7 @@ const IndexPage: React.FC = () => {
     const el = scrollRef.current;
     if (!el) return;
     const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (distFromBottom < 400 && visibleCount < filteredJobs.length) {
+    if (distFromBottom < 600 && visibleCount < filteredJobs.length) {
       setVisibleCount(n => Math.min(n + PAGE_SIZE, filteredJobs.length));
     }
   }, [visibleCount, filteredJobs.length]);

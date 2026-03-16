@@ -51,38 +51,30 @@ const IndexPage: React.FC = () => {
     );
   }, [scraperJobs, linkedInJobs]);
 
-  // useFilteredData operates on the FULL dataset — always
+  // useFilteredData is now pure/synchronous — no translation, instant results
   const { filteredJobs, filteredCompanies } = useFilteredData(
-    allJobs, companies, filters, sortKey, sortAsc, targetLang,
+    allJobs, companies, filters, sortKey, sortAsc,
   );
 
   // ── Windowed rendering ─────────────────────────────────────────────────
-  // `visibleCount` controls how many DOM nodes are rendered.
-  // The full filteredJobs array is always in memory for filtering.
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Reset window whenever filters/sort produce a new result set
+  // Reset to first page whenever the filtered set changes
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [filteredJobs]);
 
-  // IntersectionObserver: when the sentinel div at list bottom comes into view,
-  // load the next PAGE_SIZE items
-  useEffect(() => {
-    const el = sentinelRef.current;
+  // onScroll handler — load next batch when near the bottom
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount(n => Math.min(n + PAGE_SIZE, filteredJobs.length));
-        }
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [filteredJobs.length]);
+    const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distFromBottom < 400 && visibleCount < filteredJobs.length) {
+      setVisibleCount(n => Math.min(n + PAGE_SIZE, filteredJobs.length));
+    }
+  }, [visibleCount, filteredJobs.length]);
 
   const visibleJobs = useMemo(
     () => filteredJobs.slice(0, visibleCount),
@@ -190,7 +182,11 @@ const IndexPage: React.FC = () => {
 
           {/* JOBS */}
           <div className="slide-panel">
-            <div className="scroll-fade-wrap">
+            <div
+              className="scroll-fade-wrap"
+              ref={scrollRef}
+              onScroll={handleScroll}
+            >
               {loading ? (
                 <div className="loading-msg">
                   <span className="loading-dot" />loading jobs from /uploads/ …
@@ -211,14 +207,9 @@ const IndexPage: React.FC = () => {
                       index={i}
                     />
                   ))}
-
-                  {/* Sentinel div — observed to trigger loading more items */}
-                  <div ref={sentinelRef} style={{ height: 1 }} />
-
-                  {/* Load-more indicator */}
                   {visibleCount < filteredJobs.length && (
                     <div className="load-more-hint">
-                      <span className="loading-dot" />
+                      <span className="loading-dot" style={{ display: 'inline-block', marginRight: 8 }} />
                       {visibleCount} / {filteredJobs.length} — scroll for more
                     </div>
                   )}

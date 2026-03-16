@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { UserContext } from '../../context/userContext';
-import LoginButton    from '../../buttons/LoginButton';
-import RegisterButton from '../../buttons/RegisterButton';
-import LogoutButton   from '../../buttons/LogoutButton';
+import { UserContext }  from '../../context/userContext';
+import LoginButton      from '../../buttons/LoginButton';
+import RegisterButton   from '../../buttons/RegisterButton';
+import LogoutButton     from '../../buttons/LogoutButton';
 
 interface HeaderProps {
   tickerText:  string;
@@ -10,50 +10,49 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ tickerText, resultCount }) => {
-  const [user]        = useContext(UserContext);
+  const [user]       = useContext(UserContext);
   const [activeForm, setActiveForm] = useState<'login' | 'register' | null>(null);
+  const toggle = (f: 'login' | 'register') =>
+    setActiveForm(p => (p === f ? null : f));
 
-  const toggle = (form: 'login' | 'register') =>
-    setActiveForm(prev => (prev === form ? null : form));
+  const authContent = user.name ? (
+    <div className="auth-row">
+      <span className="hdr-username">{user.name}</span>
+      <LogoutButton />
+    </div>
+  ) : (
+    <div className="auth-row">
+      <LoginButton    expanded={activeForm === 'login'}    onToggle={() => toggle('login')} />
+      {activeForm === null && <span className="auth-sep">|</span>}
+      <RegisterButton expanded={activeForm === 'register'} onToggle={() => toggle('register')} />
+    </div>
+  );
 
   return (
     <header className="hdr">
-      {/* Brand block */}
-      <div className="hdr-brand">waypost</div>
 
-      <div className="hdr-pipe" />
+      {/* ── Desktop: single-row ──────────────────────────────────────── */}
+      {/* ── Mobile:  row 1 = brand + marquee ────────────────────────── */}
+      <div className="hdr-row1">
+        <div className="hdr-brand">waypost</div>
+        <div className="hdr-pipe" />
+        <div className="hdr-marquee-wrap">
+          <div className="hdr-marquee-inner">jobs ... in a minute</div>
+        </div>
 
-      {/* Vertical marquee tagline — restored */}
-      <div className="hdr-marquee-wrap">
-        <div className="hdr-marquee-inner">jobs ... in a minute</div>
+        {/* Desktop-only: spacer + count + auth inline */}
+        <div className="hdr-spacer" />
+        <div className="hdr-right-desktop">
+          <span className="hdr-count">{resultCount} roles</span>
+          {authContent}
+        </div>
       </div>
 
-      {/* Spacer pushes right content to the edge */}
-      <div style={{ flex: 1 }} />
-
-      {/* Right side */}
-      <div className="hdr-right">
-        <span className="hdr-count">{resultCount} roles</span>
-
-        {user.name ? (
-          <div className="auth-row">
-            <span className="hdr-username">{user.name}</span>
-            <LogoutButton />
-          </div>
-        ) : (
-          <div className="auth-row">
-            <LoginButton
-              expanded={activeForm === 'login'}
-              onToggle={() => toggle('login')}
-            />
-            {activeForm === null && <span className="auth-sep">|</span>}
-            <RegisterButton
-              expanded={activeForm === 'register'}
-              onToggle={() => toggle('register')}
-            />
-          </div>
-        )}
+      {/* ── Mobile only: row 2 = auth buttons full-width ─────────────── */}
+      <div className="hdr-row2-mobile">
+        {authContent}
       </div>
+
     </header>
   );
 };

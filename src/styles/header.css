@@ -2,22 +2,31 @@
 .hdr {
   position: fixed;
   top: 0; left: 0; right: 0;
-  /* Total height = logical height + notch/Dynamic Island safe area */
   height: calc(var(--hdr-h) + var(--safe-top));
   background: #000;
   border-bottom: 1.5px solid var(--green);
   z-index: 1000;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-end;
   padding-top: var(--safe-top);
-  padding-left: 26px;
-  padding-right: 26px;
-  padding-bottom: 0;
-  gap: 0;
   overflow: hidden;
 }
 
-.hdr > * { align-self: center; }
+/* ── Row 1: brand + marquee (+ desktop auth inline) ─────────────────────── */
+.hdr-row1 {
+  display: flex;
+  align-items: center;
+  height: var(--hdr-h);
+  padding: 0 26px;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+/* ── Row 2: mobile-only auth row ────────────────────────────────────────── */
+.hdr-row2-mobile {
+  display: none; /* hidden on desktop */
+}
 
 /* Brand */
 .hdr-brand {
@@ -41,7 +50,7 @@
   flex-shrink: 0;
 }
 
-/* Vertical marquee sub-tagline */
+/* Vertical marquee */
 .hdr-marquee-wrap {
   height: 18px;
   overflow: hidden;
@@ -59,46 +68,14 @@
   100% { transform: translateY(120%); }
 }
 
-/* Horizontal company ticker */
-.hdr-ticker-wrap {
-  flex: 1;
-  overflow: hidden;
-  height: 18px;
-  position: relative;
-}
-.hdr-ticker-wrap::before,
-.hdr-ticker-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 32px;
-  z-index: 2;
-  pointer-events: none;
-}
-.hdr-ticker-wrap::before { left: 0;  background: linear-gradient(to right, #000, transparent); }
-.hdr-ticker-wrap::after  { right: 0; background: linear-gradient(to left,  #000, transparent); }
+/* Spacer (desktop) */
+.hdr-spacer { flex: 1; }
 
-.hdr-ticker-inner {
-  display: inline-flex;
-  gap: 0;
-  white-space: nowrap;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: var(--dim2);
-  line-height: 18px;
-  animation: tickerH 40s linear infinite;
-}
-@keyframes tickerH {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* Right section */
-.hdr-right {
+/* Desktop right section */
+.hdr-right-desktop {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-left: 18px;
   flex-shrink: 0;
 }
 
@@ -118,7 +95,6 @@
   font-family: var(--mono);
 }
 
-/* Auth row */
 .auth-row {
   display: flex;
   align-items: center;

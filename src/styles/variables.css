@@ -47,18 +47,11 @@
   }
 }
 
-/* ── TABLET (≤ 860px) ───────────────────────────────────────────────────── */
-/* Only --hdr-h matters on mobile — the flex column layout in mobile.css    */
-/* measures filter bar height automatically, no hardcoded fbar-h needed.    */
+/* ── TABLET / PHONE (≤ 860px) ───────────────────────────────────────────── */
+/* --hdr-h = height of row 1 only; mobile.css adds the row-2 offset to page-root */
 @media (max-width: 860px) {
-  :root {
-    --hdr-h: 56px;
-  }
+  :root { --hdr-h: 56px; }
 }
-
-/* ── PHONE (≤ 480px) ────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  :root {
-    --hdr-h: 52px;
-  }
+  :root { --hdr-h: 52px; }
 }

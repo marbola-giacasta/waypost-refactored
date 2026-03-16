@@ -8,6 +8,7 @@ import { useLoadLinkedInJobs }     from '../hooks/useLoadLinkedInJobs';
 import { useLoadCompanies }        from '../hooks/useLoadCompanies';
 import { useFilteredData }         from '../hooks/useFilteredData';
 import { FloatingFooter }           from '../components/Layout/FloatingFooter';
+import type { SortKey } from '../hooks/useFilteredData';
 
 type View = 'jobs' | 'companies';
 

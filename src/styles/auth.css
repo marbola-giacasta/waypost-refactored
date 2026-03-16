@@ -1,0 +1,81 @@
+/* ── AUTH BUTTONS ─────────────────────────────────────────────────────────
+   Inline-expanding forms in the header.
+   Login label = green, Register label = white/dimmer, Logout = red.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Label trigger */
+.auth-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: color 0.2s;
+  user-select: none;
+  white-space: nowrap;
+}
+.auth-label.login    { color: var(--green); }
+.auth-label.register { color: var(--dim); }
+.auth-label.logout   { color: var(--red); }
+.auth-label:hover    { opacity: 0.75; }
+
+/* Form wrapper */
+.auth-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Fields container — slides in from the right */
+.auth-fields {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity    0.35s ease;
+  pointer-events: none;
+}
+.auth-fields.visible {
+  max-width: 420px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Inputs inside auth forms */
+.auth-fields input {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 8px;
+  background: var(--bg3);
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  color: var(--white);
+  outline: none;
+  width: 110px;
+  caret-color: var(--green);
+  transition: border-color 0.2s;
+}
+.auth-fields input:focus { border-color: var(--green); }
+.auth-fields input::placeholder { color: var(--dim3); }
+
+/* Submit button */
+.auth-fields button[type='submit'] {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 65, 0.35);
+  color: var(--green);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-fields button[type='submit']:hover {
+  background: var(--green);
+  color: #000;
+}
+
+/* Feedback */
+.auth-err { font-size: 10px; color: var(--red); white-space: nowrap; }
+.auth-ok  { font-size: 10px; color: var(--green); white-space: nowrap; }

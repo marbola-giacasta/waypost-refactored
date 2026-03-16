@@ -1,0 +1,65 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  /* Use dvh so mobile browser chrome doesn't cause overflow */
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--mono);
+  /* Prevent rubber-band scroll on iOS at body level */
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth momentum scrolling on all overflow areas */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent text selection flicker on touch */
+button, a {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+/* CRT scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.025) 3px,
+    rgba(0, 0, 0, 0.025) 4px
+  );
+}
+
+/* Global scrollbar */
+::-webkit-scrollbar            { width: 3px; }
+::-webkit-scrollbar-track      { background: transparent; }
+::-webkit-scrollbar-thumb      { background: rgba(0, 255, 65, 0.2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover{ background: var(--green); }
+
+/* Keyword highlight (used by Highlight.tsx) */
+.highlight-keyword {
+  background: var(--pink);
+  color: #fff;
+  padding: 1px 5px;
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--pink-glow);
+  box-shadow: 0 0 12px var(--pink-glow), inset 0 0 8px rgba(217, 70, 239, 0.35);
+  animation: kwPulse 1.8s infinite alternate;
+  border: 1px solid #e879f9;
+  display: inline;
+  border-radius: 2px;
+}
+@keyframes kwPulse {
+  from { box-shadow: 0 0 12px var(--pink-glow); }
+  to   { box-shadow: 0 0 24px #d946ef, 0 0 40px #c026d3; }
+}

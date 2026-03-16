@@ -1,0 +1,50 @@
+import { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
+import type { LinkedInJobRecord, NormalizedJob } from '../utils/constants';
+import { parseTimestamp } from '../utils/parseTimestamp';
+
+export const useLoadLinkedInJobs = () => {
+  const [jobs, setJobs]       = useState<NormalizedJob[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/uploads/jobs-linkedin.xlsx');
+        // File is optional — silently skip if not present
+        if (!res.ok) { setLoading(false); return; }
+        const buf = await res.arrayBuffer();
+        const wb  = XLSX.read(buf, { type: 'array', cellDates: true });
+        const raw = XLSX.utils.sheet_to_json<LinkedInJobRecord>(
+          wb.Sheets[wb.SheetNames[0]],
+          { raw: true, defval: '' },
+        );
+
+        const normalized: NormalizedJob[] = raw
+          .map(r => ({
+            company:     String(r.companyName   ?? '').trim(),
+            title:       String(r.roleTitle      ?? '').trim(),
+            location:    String(r.location       ?? '').trim(),
+            description: String(r.description   ?? '').trim(),
+            // Prefer internalLink (LinkedIn job page); fall back to externalLink
+            link:        String(r.internalLink !== 'N/A' ? r.internalLink : (r.externalLink ?? '')).trim(),
+            scrapedAt:   String(r.scrapedAt     ?? '').trim(),
+            source:      'linkedin' as const,
+            _parsedDate: parseTimestamp(r.postedAbsolute),
+          }))
+          .filter(j => j.title || j.company)
+          .sort((a, b) => (b._parsedDate?.getTime() ?? 0) - (a._parsedDate?.getTime() ?? 0));
+
+        setJobs(normalized);
+      } catch (e) {
+        console.error('useLoadLinkedInJobs:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  return { jobs, loading };
+};

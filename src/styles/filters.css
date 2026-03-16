@@ -1,0 +1,194 @@
+/* ── FILTERS BAR ───────────────────────────────────────────────────────── */
+.filters-bar {
+  position: fixed;
+  top: calc(var(--hdr-h) + var(--safe-top));
+  left: 0; right: 0;
+  height: var(--fbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+  z-index: 900;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 26px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filters-bar::-webkit-scrollbar { display: none; }
+
+/* filter group */
+.fg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.flbl {
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: var(--dim2);
+  text-transform: uppercase;
+}
+
+/* text input */
+.fi {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  color: var(--white);
+  outline: none;
+  width: 136px;
+  caret-color: var(--green);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.fi::placeholder { color: var(--dim3); }
+.fi:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.12);
+}
+/* Keyword input */
+.fi.kw {
+  border-color: rgba(217, 70, 239, 0.3);
+  width: 190px;
+}
+.fi.kw:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 14px rgba(217, 70, 239, 0.28);
+}
+
+/* Clear button */
+.fclear {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 45, 85, 0.3);
+  color: var(--red);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  align-self: flex-end;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.fclear:hover {
+  background: rgba(255, 45, 85, 0.1);
+  border-color: var(--red);
+}
+
+/* Right-side translation selector anchor */
+.fbar-right {
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+/* ── META / SORT BAR ───────────────────────────────────────────────────── */
+.meta-bar {
+  position: fixed;
+  top: calc(var(--hdr-h) + var(--fbar-h));
+  left: 0; right: 0;
+  height: var(--mbar-h);
+  background: var(--bg);
+  border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+  z-index: 899;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  gap: 14px;
+}
+
+/* Jobs / Companies tab toggle */
+.view-tabs {
+  display: flex;
+  gap: 0;
+  flex-shrink: 0;
+}
+.vtab {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 4px 14px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 65, 0.15);
+  color: var(--dim2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vtab + .vtab { border-left: none; }
+.vtab.active {
+  background: var(--green-dim);
+  border-color: rgba(0, 255, 65, 0.4);
+  color: var(--green);
+}
+.vtab:hover:not(.active) { color: var(--dim); }
+
+/* Active keyword pill */
+.kw-active {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--pink);
+  background: rgba(217, 70, 239, 0.08);
+  border: 1px solid rgba(217, 70, 239, 0.25);
+  padding: 2px 10px;
+}
+
+/* Sort controls */
+.sorts {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.sort-lbl {
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: var(--dim3);
+  margin-right: 8px;
+}
+.sbtn {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 3px 10px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(0, 255, 65, 0.07);
+  color: var(--dim3);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: color 0.15s;
+}
+.sbtn:first-of-type { border-left: none; }
+.sbtn:hover, .sbtn.on { color: var(--green); }
+.sbtn.on::after   { content: ' ▴'; }
+.sbtn.on.d::after { content: ' ▾'; }
+
+/* ── COLUMN HEADERS ────────────────────────────────────────────────────── */
+.col-hdr {
+  position: fixed;
+  top: calc(var(--hdr-h) + var(--fbar-h) + var(--mbar-h));
+  left: 0; right: 0;
+  height: var(--chdr-h);
+  background: var(--bg2);
+  border-bottom: 1px solid rgba(0, 255, 65, 0.12);
+  z-index: 898;
+  display: grid;
+  grid-template-columns: 30px 2fr 1.8fr 124px;
+  padding: 0 26px;
+}
+.ch {
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: var(--dim2);
+  text-transform: uppercase;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid rgba(0, 255, 65, 0.05);
+}
+.ch:last-child  { border-right: none; justify-content: flex-end; }
+.ch-idx         { justify-content: center; padding: 0 4px; }
+.ch-r           { justify-content: flex-end; }
+.ch-sc          { justify-content: flex-end; }
+.ch em          { font-style: normal; color: var(--dim3); margin-left: 4px; }

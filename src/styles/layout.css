@@ -1,0 +1,95 @@
+/* ── PAGE ROOT ──────────────────────────────────────────────────────────── */
+.page-root {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ── SLIDE OUTER / TRACK ───────────────────────────────────────────────── */
+.slide-outer {
+  position: fixed;
+  top: var(--top-offset);
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+/* Double-width track — jobs panel | companies panel */
+.slide-track {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  /* shift: left=jobs, right=companies */
+  transform: translateX(0);
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.slide-track.show-co {
+  transform: translateX(-50%);
+}
+
+/* Each panel is 50% of the 200%-wide track = 100% viewport */
+.slide-panel {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Scroll area with bottom fade */
+.scroll-fade-wrap {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* iOS momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  /* Extra padding so last card clears home-bar on iPhone */
+  padding-bottom: calc(120px + var(--safe-bottom));
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 65, 0.2) transparent;
+  position: relative;
+}
+/* Bottom fade overlay */
+.scroll-fade-wrap::after {
+  content: '';
+  position: sticky;
+  display: block;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+  margin-top: -80px;
+}
+
+/* ── STATES ─────────────────────────────────────────────────────────────── */
+.loading-msg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 26px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--dim2);
+}
+.loading-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 0.9s infinite alternate;
+}
+@keyframes blink {
+  from { opacity: 1; }
+  to   { opacity: 0.15; }
+}
+
+.empty-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 50%;
+  color: var(--dim3);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+.empty-glyph { font-size: 44px; color: rgba(0, 255, 65, 0.12); }

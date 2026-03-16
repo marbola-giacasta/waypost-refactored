@@ -1,0 +1,273 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE — waypost v2
+   Core strategy: on mobile, abandon the position:fixed stacking approach
+   and use a flex column instead. This means filter bar height is always
+   exactly as tall as it needs to be — no hardcoded pixel calculations.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── TABLET + LARGE PHONE (≤ 860px) ────────────────────────────────────── */
+@media (max-width: 860px) {
+
+  /* ── PAGE ROOT: flex column filling full height ─────────────────────── */
+  .page-root {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    /* push everything below the fixed header */
+    padding-top: calc(var(--hdr-h) + var(--safe-top));
+    overflow: hidden;
+  }
+
+  /* ── FILTERS BAR: leave fixed, become a natural-height flex row ──────── */
+  .filters-bar {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: unset;
+    flex-shrink: 0;
+    /* switch to wrapping flexbox — no nth-child grid hacks */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 8px 10px;
+    padding: 10px calc(14px + var(--safe-left)) 10px calc(14px + var(--safe-right));
+    overflow: visible;
+  }
+
+  /* Each filter group: half width (two per row) */
+  .fg {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 100px;
+  }
+
+  /* Keyword field: full width */
+  .fg:has(.fi.kw) {
+    flex: 1 1 100%;
+  }
+
+  .fi       { width: 100%; font-size: 11px; }
+  .fi.kw    { width: 100%; border-color: rgba(217,70,239,.3); }
+  .fi.kw:focus { border-color: var(--pink); box-shadow: 0 0 14px rgba(217,70,239,.28); }
+  .flbl     { font-size: 7.5px; }
+
+  /* Clear button: auto width, sits inline */
+  .fclear {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    padding: 6px 12px;
+  }
+
+  /* Translate selector: pushed to the right */
+  .fbar-right {
+    flex: 0 0 auto;
+    margin-left: auto;
+    align-self: flex-end;
+    grid-column: unset;
+    grid-row: unset;
+  }
+
+  /* ── META BAR: relative, natural height ──────────────────────────────── */
+  .meta-bar {
+    position: relative !important;
+    top: auto !important;
+    height: 34px;
+    flex-shrink: 0;
+    padding: 0 calc(14px + var(--safe-left));
+    gap: 10px;
+  }
+  .sort-lbl { display: none; }
+  .sbtn     { padding: 3px 7px; font-size: 9px; }
+
+  /* ── COLUMN HEADER: hide on mobile ──────────────────────────────────── */
+  .col-hdr { display: none !important; }
+
+  /* ── SLIDE OUTER: fill all remaining height ──────────────────────────── */
+  .slide-outer {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    flex: 1;
+    min-height: 0; /* critical: lets flex child shrink & scroll */
+    overflow: hidden;
+  }
+
+  /* GPU-composited slide */
+  .slide-track {
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* ── HEADER ──────────────────────────────────────────────────────────── */
+  .hdr {
+    padding-left:  calc(14px + var(--safe-left));
+    padding-right: calc(14px + var(--safe-right));
+  }
+  .hdr-brand        { font-size: 15px; padding: 4px 10px; }
+  .hdr-pipe         { margin: 0 10px; }
+  /* Restore the vertical marquee — it fits nicely on tablet */
+  .hdr-marquee-wrap { display: flex; }
+  /* Hide the horizontal company ticker — too wide for mobile */
+  .hdr-ticker-wrap  { display: none; }
+  .hdr-count        { display: none; }
+
+  /* Auth buttons — slightly smaller on mobile */
+  .auth-label         { font-size: 10px; letter-spacing: 0.1em; }
+  .auth-fields.visible{ max-width: 300px; }
+  .auth-fields input  { width: 88px; font-size: 11px; }
+
+  /* ── JOB CARD: 3-col grid ────────────────────────────────────────────── */
+  .job-entry { grid-template-columns: 28px 1fr 96px; }
+  .jc-desc, .jc-scraped { display: none; }
+  .jc-main  { padding: 12px 10px 12px 10px; }
+  .jc-right { padding: 12px 8px; }
+  .jc-title { font-size: 12.5px; }
+  .jc-company { font-size: 10px; }
+
+  /* ── JOB LIST PADDING ────────────────────────────────────────────────── */
+  .job-list { padding: 0 calc(14px + var(--safe-left)); }
+
+  /* ── TRANSLATION DROPDOWN ────────────────────────────────────────────── */
+  .trans-trigger  { font-size: 9px; padding: 5px 8px; gap: 5px; }
+  .trans-dropdown { right: 0; min-width: 140px; }
+}
+
+
+/* ── PHONE PORTRAIT (≤ 480px) ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  /* HEADER */
+  .hdr-brand { font-size: 14px; padding: 4px 9px; }
+  /* Hide marquee on tiny phones — not enough room */
+  .hdr-marquee-wrap { display: none; }
+  .auth-sep         { display: none; }
+  .auth-row         { gap: 8px; }
+  .auth-label       { font-size: 10px; }
+  .auth-fields.visible { max-width: 220px; flex-wrap: wrap; gap: 4px; }
+  .auth-fields input   { width: 74px; font-size: 10px; padding: 4px 6px; }
+
+  /* FILTER BAR — still flex-wrap, slightly tighter */
+  .filters-bar {
+    gap: 7px 8px;
+    padding: 9px calc(12px + var(--safe-left)) 9px calc(12px + var(--safe-right));
+  }
+  .fi   { font-size: 10.5px; }
+  .flbl { font-size: 7px; }
+
+  /* META BAR */
+  .sorts     { display: none; }
+  .vtab      { padding: 4px 10px; font-size: 9px; letter-spacing: 0.08em; }
+  .kw-active { font-size: 9px; padding: 2px 7px;
+               max-width: 120px; overflow: hidden;
+               text-overflow: ellipsis; white-space: nowrap; }
+
+  /* CARD — flex row layout (no grid) */
+  .job-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,255,65,.08);
+    grid-template-columns: unset;
+  }
+  .jc-idx {
+    width: 22px; min-width: 22px;
+    padding-top: 2px;
+    font-size: 8px;
+    border-right: none;
+    justify-content: center;
+  }
+  .jc-main {
+    flex: 1;
+    padding: 0 8px 0 6px;
+    gap: 4px;
+    border-right: none;
+  }
+  .jc-company   { font-size: 9px; }
+  .loc-pill     { font-size: 7.5px; padding: 1px 5px; }
+  .src-badge    { font-size: 7px; padding: 1px 4px; }
+  .jc-title     { font-size: 13px; line-height: 1.3; }
+  .jc-right {
+    min-width: 74px;
+    padding: 0 0 0 4px;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 6px;
+    border-right: none;
+  }
+  .jc-link           { font-size: 9px; padding: 3px 7px; }
+  .jc-time .ago      { font-size: 9px; }
+  .jc-time .date-sub { font-size: 7.5px; }
+  .jc-desc, .jc-scraped { display: none; }
+
+  .job-list { padding: 0 12px; }
+}
+
+
+/* ── VERY SMALL (≤ 360px — Galaxy S24 narrow) ──────────────────────────── */
+@media (max-width: 360px) {
+  .hdr-brand    { font-size: 13px; padding: 3px 8px; }
+  .auth-label   { font-size: 9.5px; letter-spacing: 0.08em; }
+  .jc-link      { font-size: 8.5px; padding: 3px 6px; }
+  .fi           { font-size: 10px; }
+  .auth-fields input { width: 66px; }
+}
+
+
+/* ── LANDSCAPE PHONE (height ≤ 450px) ───────────────────────────────────── */
+@media (max-height: 450px) and (orientation: landscape) {
+
+  /* In landscape the flex-column approach still works,
+     but the header is shorter and filters show in one row */
+  .page-root {
+    padding-top: calc(44px + var(--safe-top));
+  }
+
+  .filters-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px calc(12px + var(--safe-left));
+    gap: 8px;
+  }
+  .fg              { flex: 0 0 auto; }
+  .fi              { width: 110px; }
+  .fi.kw           { width: 150px; }
+  /* keyword no longer full-width in landscape */
+  .fg:has(.fi.kw)  { flex: 0 0 auto; }
+  .fbar-right      { margin-left: auto; }
+
+  .hdr { height: calc(44px + var(--safe-top)); }
+  .hdr-brand { font-size: 13px; }
+  .hdr-marquee-wrap { display: flex; }
+
+  /* Restore 3-col card grid in landscape */
+  .job-entry {
+    display: grid;
+    grid-template-columns: 24px 1fr 90px;
+    flex-direction: unset;
+  }
+  .jc-main  { padding: 8px 10px 8px 8px; }
+  .jc-right { padding: 8px 6px; }
+}
+
+
+/* ── IPAD PORTRAIT (768–860px) — restore description col ────────────────── */
+@media (min-width: 768px) and (max-width: 860px) {
+  .col-hdr { display: grid !important; }
+  .jc-desc  { display: block; }
+  .job-entry { grid-template-columns: 28px 1.4fr 1.2fr 100px; }
+  .col-hdr   { grid-template-columns: 28px 1.4fr 1.2fr 100px; }
+}
+
+
+/* ── PREVENT iOS ZOOM ON INPUT FOCUS ───────────────────────────────────── */
+/* iOS Safari zooms when font-size < 16px on focused inputs */
+@media (max-width: 860px) {
+  .fi:focus,
+  .auth-fields input:focus {
+    font-size: 16px !important;
+  }
+}

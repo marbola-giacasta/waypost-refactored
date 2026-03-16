@@ -1,0 +1,64 @@
+/* ── BASE (desktop ≥ 861px) ─────────────────────────────────────────────── */
+:root {
+  /* brand */
+  --green:      #00ff41;
+  --green2:     #00cc33;
+  --green-dim:  rgba(0, 255, 65, 0.12);
+  --pink:       #d946ef;
+  --pink-glow:  rgba(217, 70, 239, 0.65);
+  --white:      #e2e8e3;
+  --dim:        rgba(226, 232, 227, 0.55);
+  --dim2:       rgba(226, 232, 227, 0.28);
+  --dim3:       rgba(226, 232, 227, 0.12);
+  --red:        #ff2d55;
+  --amber:      #f59e0b;
+  --sky:        #38bdf8;
+  --emerald:    #34d399;
+  --bg:         #0a0c0b;
+  --bg2:        #0e1110;
+  --bg3:        #131816;
+  --bg4:        #181f1c;
+
+  /* fonts */
+  --mono: 'IBM Plex Mono', monospace;
+  --syne: 'Syne', sans-serif;
+
+  /* layout heights — desktop */
+  --hdr-h:      68px;
+  --fbar-h:     82px;
+  --mbar-h:     34px;
+  --chdr-h:     28px;
+  --top-offset: calc(var(--hdr-h) + var(--fbar-h) + var(--mbar-h) + var(--chdr-h));
+
+  /* safe-area fallbacks */
+  --safe-top:    0px;
+  --safe-bottom: 0px;
+  --safe-left:   0px;
+  --safe-right:  0px;
+}
+
+/* iPhone notch / Dynamic Island / Android cutout */
+@supports (padding-top: env(safe-area-inset-top)) {
+  :root {
+    --safe-top:    env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-left:   env(safe-area-inset-left);
+    --safe-right:  env(safe-area-inset-right);
+  }
+}
+
+/* ── TABLET (≤ 860px) ───────────────────────────────────────────────────── */
+/* Only --hdr-h matters on mobile — the flex column layout in mobile.css    */
+/* measures filter bar height automatically, no hardcoded fbar-h needed.    */
+@media (max-width: 860px) {
+  :root {
+    --hdr-h: 56px;
+  }
+}
+
+/* ── PHONE (≤ 480px) ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --hdr-h: 52px;
+  }
+}

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const PHRASES = [
-  'opportunities.',
-  'focused on Switzerland.',
-  'no algorithm.',
-  'no AI.',
-  'no data stored.',
-  'if a job surfaces anywhere, we catch it for you.',
+  'opportunities',
+  'focused on Switzerland',
+  'no algorithm',
+  'no AI',
+  'no data stored',
+  'if a job surfaces anywhere, we catch it for you',
 ];
 
 // Each phrase is visible for HOLD ms, then fades out over FADE ms

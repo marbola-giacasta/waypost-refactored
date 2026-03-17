@@ -44,6 +44,8 @@
   flex-direction: column;
   gap: 5px;
   border-right: 1px solid rgba(0, 255, 65, 0.05);
+  min-width: 0;          /* critical: allows 1fr column to shrink, prevents overflow */
+  overflow: hidden;
 }
 
 .jc-company {

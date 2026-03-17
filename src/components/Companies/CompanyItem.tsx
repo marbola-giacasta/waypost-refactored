@@ -82,9 +82,9 @@ export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLa
           </div>
         </div>
 
-        {/* Links — no description preview; drawer opens on tap */}
+        {/* Links — fixed 120px right column, always visible if populated */}
         <div className="jc-right">
-          {company.Website && (
+          {company.Website && company.Website !== 'N/A' && (
             <a
               className="jc-link"
               href={company.Website.startsWith('http') ? company.Website : `https://${company.Website}`}
@@ -95,7 +95,7 @@ export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLa
               website ↗
             </a>
           )}
-          {company['LinkedIn URL'] && (
+          {company['LinkedIn URL'] && company['LinkedIn URL'] !== 'N/A' && (
             <a
               className="jc-link"
               href={company['LinkedIn URL']}

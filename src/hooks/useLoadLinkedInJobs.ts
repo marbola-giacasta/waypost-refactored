@@ -22,17 +22,23 @@ export const useLoadLinkedInJobs = () => {
         );
 
         const normalized: NormalizedJob[] = raw
-          .map(r => ({
-            company:     String(r.companyName   ?? '').trim(),
-            title:       String(r.roleTitle      ?? '').trim(),
-            location:    String(r.location       ?? '').trim(),
-            description: String(r.description   ?? '').trim(),
-            // Prefer internalLink (LinkedIn job page); fall back to externalLink
-            link:        String(r.internalLink !== 'N/A' ? r.internalLink : (r.externalLink ?? '')).trim(),
-            scrapedAt:   String(r.scrapedAt     ?? '').trim(),
-            source:      'linkedin' as const,
-            _parsedDate: parseTimestamp(r.postedAbsolute),
-          }))
+          .map(r => {
+            const postedRaw = r.postedAbsolute;
+            const postedStr = postedRaw && String(postedRaw).trim() !== 'N/A'
+              ? String(postedRaw).trim()
+              : '';
+            return {
+              company:       String(r.companyName  ?? '').trim() || 'not available',
+              title:         String(r.roleTitle     ?? '').trim() || 'not available',
+              location:      String(r.location      ?? '').trim() || 'not available',
+              description:   String(r.description  ?? '').trim(),
+              link:          String(r.internalLink !== 'N/A' ? r.internalLink : (r.externalLink ?? '')).trim(),
+              scrapedAt:     String(r.scrapedAt     ?? '').trim(),
+              source:        'linkedin' as const,
+              rawPostedDate: postedStr,
+              _parsedDate:   parseTimestamp(postedRaw),
+            };
+          })
           .filter(j => j.title || j.company)
           .sort((a, b) => (b._parsedDate?.getTime() ?? 0) - (a._parsedDate?.getTime() ?? 0));
 

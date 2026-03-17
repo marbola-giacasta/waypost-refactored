@@ -59,7 +59,7 @@ export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLa
 
       {/* ── Card row ── */}
       <div
-        className={`job-entry${expanded ? ' is-expanded' : ''}`}
+        className={`job-entry company-card${expanded ? ' is-expanded' : ''}`}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onClick={handleCardClick}
@@ -82,15 +82,7 @@ export const CompanyItem: React.FC<Props> = ({ company, filtersKeyword, targetLa
           </div>
         </div>
 
-        {/* Description preview (desktop only — 2-line teaser) */}
-        <div className="jc-desc-preview">
-          {desc
-            ? <Highlight text={desc.slice(0, 200)} kw={filtersKeyword} lang={targetLang} />
-            : <span className="no-desc">—</span>}
-          <span className="expand-hint">↕</span>
-        </div>
-
-        {/* Links */}
+        {/* Links — no description preview; drawer opens on tap */}
         <div className="jc-right">
           {company.Website && (
             <a

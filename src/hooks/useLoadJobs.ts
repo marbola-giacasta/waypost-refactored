@@ -27,16 +27,23 @@ export const useLoadJobs = () => {
         );
 
         const normalized: NormalizedJob[] = raw
-          .map(r => ({
-            company:     clean(r.Company),
-            title:       clean(r['Job Title']),
-            location:    clean(r.Location),
-            description: clean(r['Description (excerpt)'] ?? ''),
-            link:        clean(r['Apply Link']),
-            scrapedAt:   clean(r['Scraped At']),
-            source:      'scraper' as const,
-            _parsedDate: parseTimestamp(r['Posted Date']),
-          }))
+          .map(r => {
+            const postedRaw = r['Posted Date'];
+            const postedStr = postedRaw
+              ? String(postedRaw).replace(/[\n\t\r]/g, ' ').trim()
+              : '';
+            return {
+              company:       clean(r.Company)     || 'not available',
+              title:         clean(r['Job Title']) || 'not available',
+              location:      clean(r.Location)     || 'not available',
+              description:   clean(r['Description (excerpt)'] ?? ''),
+              link:          clean(r['Apply Link']) || '',
+              scrapedAt:     clean(r['Scraped At']) || '',
+              source:        'scraper' as const,
+              rawPostedDate: postedStr,
+              _parsedDate:   parseTimestamp(postedRaw),
+            };
+          })
           .filter(j => j.title || j.company)
           .sort((a, b) => (b._parsedDate?.getTime() ?? 0) - (a._parsedDate?.getTime() ?? 0));
 

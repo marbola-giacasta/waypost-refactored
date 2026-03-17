@@ -42,10 +42,10 @@ export const JobItem: React.FC<Props> = ({ job, filtersKeyword, targetLang, inde
 
   const displayDesc = translatedDesc ?? job.description ?? '';
 
-  const ago     = job._parsedDate ? formatTimeAgo(job._parsedDate) : '';
-  const dateStr = job._parsedDate
-    ? job._parsedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
-    : '';
+  // Red "ago" text: relative to now in CET (browser time for European users)
+  const ago     = job._parsedDate ? formatTimeAgo(job._parsedDate) : null;
+  // Grey subtitle: the raw date string from the file (postedAbsolute / Posted Date)
+  const dateSub = job.rawPostedDate || null;
 
   // ── Tap vs scroll detection ──────────────────────────────────────────
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
@@ -130,8 +130,10 @@ export const JobItem: React.FC<Props> = ({ job, filtersKeyword, targetLang, inde
             </a>
           )}
           <div className="jc-time">
-            {ago     && <span className="ago">{ago}</span>}
-            {dateStr && <span className="date-sub">{dateStr}</span>}
+            {ago !== null
+              ? <span className="ago">{ago}</span>
+              : <span className="ago time-missing">time missing</span>}
+            {dateSub && <span className="date-sub">{dateSub}</span>}
           </div>
         </div>
       </div>

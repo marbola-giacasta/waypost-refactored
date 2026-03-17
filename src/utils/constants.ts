@@ -1,14 +1,15 @@
 // ── Shared normalized shape — both scrapers map into this ────────────────
 // JobItem, useFilteredData, and all display logic use ONLY this type.
 export type NormalizedJob = {
-  company:     string;
-  title:       string;
-  location:    string;
-  description: string;
-  link:        string;
-  scrapedAt:   string;
-  source:      'scraper' | 'linkedin';   // where the job came from
-  _parsedDate: Date | null;
+  company:       string;
+  title:         string;
+  location:      string;
+  description:   string;
+  link:          string;
+  scrapedAt:     string;
+  source:        'scraper' | 'linkedin';
+  _parsedDate:   Date | null;
+  rawPostedDate: string;   // exact string from the file, shown as grey subtitle
 };
 
 export type NormalizedJobWithTranslation = NormalizedJob & {

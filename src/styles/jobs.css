@@ -93,7 +93,13 @@
   line-height: 1.35;
 }
 
-/* Company sectors — single-line looping marquee under company name */
+/* Company cards have no description column — 3 cols only */
+.company-card {
+  grid-template-columns: 30px 1fr 120px !important;
+}
+@media (max-width: 860px) {
+  .company-card { grid-template-columns: 28px 1fr 96px !important; }
+}
 .jc-sectors-marquee {
   overflow: hidden;
   white-space: nowrap;
@@ -278,8 +284,9 @@
   align-items: flex-end;
   gap: 2px;
 }
-.jc-time .ago      { font-size: 10px; color: var(--red); letter-spacing: 0.07em; font-weight: 600; }
-.jc-time .date-sub { font-size: 8px;  color: var(--dim3); }
+.jc-time .ago           { font-size: 10px; color: var(--red); letter-spacing: 0.07em; font-weight: 600; }
+.jc-time .ago.time-missing { font-size: 9px; opacity: 0.55; font-weight: 400; font-style: italic; }
+.jc-time .date-sub      { font-size: 8px;  color: var(--dim3); }
 
 /* Scraped column (hidden on mobile) */
 .jc-scraped {

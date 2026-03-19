@@ -7,7 +7,7 @@ const PHRASES = [
   'no algorithm',
   'no AI',
   'no data stored',
-  'if a job surfaces anywhere, we catch it for you',
+  'if a job surfaces anywhere, we aim to bring it here for you',
 ];
 
 // Each phrase is visible for HOLD ms, then fades out over FADE ms

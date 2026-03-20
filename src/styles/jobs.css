@@ -288,7 +288,7 @@
 }
 .jc-time .ago           { font-size: 10px; color: var(--red); letter-spacing: 0.07em; font-weight: 600; }
 .jc-time .ago.time-missing { font-size: 9px; opacity: 0.55; font-weight: 400; font-style: italic; }
-.jc-time .date-sub { font-size: 6px; color: rgba(226, 232, 227, 0.45); }
+.jc-time .date-sub { font-size: 8px; color: rgba(226, 232, 227, 0.45); }
 
 /* Scraped column (hidden on mobile) */
 .jc-scraped {

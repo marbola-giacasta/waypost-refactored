@@ -33,13 +33,20 @@ function jobMatches(job: NormalizedJob, filters: Filters): boolean {
 
 function coMatches(co: ParsedCompany, filters: Filters): boolean {
   const kw = filters.keyword.toLowerCase();
+  // Location filter checks both the Location column and _sourceFile
+  const locationTarget = [
+    co['Location'] ?? '',
+    co._sourceFile ?? '',
+  ].join(' ').toLowerCase();
   return (
     (!filters.company  || co['Company Name'].toLowerCase().includes(filters.company.toLowerCase())) &&
-    (!filters.location || co._sourceFile.toLowerCase().includes(filters.location.toLowerCase()))    &&
+    (!filters.location || locationTarget.includes(filters.location.toLowerCase()))                  &&
     (!kw || (
-      (co.Panoramica ?? '').toLowerCase().includes(kw) ||
-      co['Company Name'].toLowerCase().includes(kw)    ||
-      (co['Settori di competenza'] ?? '').toLowerCase().includes(kw)
+      (co.Panoramica ?? '').toLowerCase().includes(kw)             ||
+      co['Company Name'].toLowerCase().includes(kw)                ||
+      (co['Settori di competenza'] ?? '').toLowerCase().includes(kw) ||
+      (co['Industry'] ?? '').toLowerCase().includes(kw)            ||
+      (co['Latest News'] ?? '').toLowerCase().includes(kw)
     ))
   );
 }

@@ -65,7 +65,7 @@ const IndexPage: React.FC = () => {
     allJobs, companies, filters, sortKey, sortAsc,
   );
 
-  // ── Windowed rendering ────────────────────────────────────────────────
+  // ── Windowed rendering — JOBS ────────────────────────────────────────
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +86,29 @@ const IndexPage: React.FC = () => {
   const visibleJobs = useMemo(
     () => filteredJobs.slice(0, visibleCount),
     [filteredJobs, visibleCount],
+  );
+
+  // ── Windowed rendering — COMPANIES ────────────────────────────────────
+  const [visibleCoCount, setVisibleCoCount] = useState(PAGE_SIZE);
+  const coScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setVisibleCoCount(PAGE_SIZE);
+    if (coScrollRef.current) coScrollRef.current.scrollTop = 0;
+  }, [filteredCompanies]);
+
+  const handleCoScroll = useCallback(() => {
+    const el = coScrollRef.current;
+    if (!el) return;
+    const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distFromBottom < 600 && visibleCoCount < filteredCompanies.length) {
+      setVisibleCoCount(n => Math.min(n + PAGE_SIZE, filteredCompanies.length));
+    }
+  }, [visibleCoCount, filteredCompanies.length]);
+
+  const visibleCompanies = useMemo(
+    () => filteredCompanies.slice(0, visibleCoCount),
+    [filteredCompanies, visibleCoCount],
   );
 
   // ── Ticker ────────────────────────────────────────────────────────────
@@ -155,7 +178,11 @@ const IndexPage: React.FC = () => {
             className={`vtab${view === 'companies' ? ' active' : ''}`}
             onClick={() => switchView('companies')}
           >
-            companies {cLoading ? '…' : `(${filteredCompanies.length})`}
+            companies {cLoading
+              ? '…'
+              : visibleCoCount < filteredCompanies.length
+                ? `(${visibleCoCount}+)`
+                : `(${filteredCompanies.length})`}
           </button>
         </div>
 
@@ -232,7 +259,11 @@ const IndexPage: React.FC = () => {
 
           {/* COMPANIES PANEL — never remounts; resetKey prop collapses open drawers */}
           <div className="slide-panel">
-            <div className="scroll-fade-wrap">
+            <div
+              className="scroll-fade-wrap"
+              ref={coScrollRef}
+              onScroll={handleCoScroll}
+            >
               {cLoading ? (
                 <div className="loading-msg">
                   <span className="loading-dot" />loading companies…
@@ -244,7 +275,7 @@ const IndexPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="job-list">
-                  {filteredCompanies.map((co, i) => (
+                  {visibleCompanies.map((co, i) => (
                     <CompanyItem
                       key={`${co['Company Name']}-${i}`}
                       company={co}
@@ -254,6 +285,13 @@ const IndexPage: React.FC = () => {
                       resetKey={companiesKey}
                     />
                   ))}
+                  {visibleCoCount < filteredCompanies.length && (
+                    <div className="load-more-hint">
+                      <span className="loading-dot"
+                        style={{ display: 'inline-block', marginRight: 8 }} />
+                      {visibleCoCount} / {filteredCompanies.length} — scroll for more
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -43,6 +43,7 @@ export type LinkedInJobRecord = {
   roleTitle:       string;
   location:        string;
   description:     string;
+  summary?:        string;
   internalLink:    string;
   externalLink:    string;
   postedRelative:  string;

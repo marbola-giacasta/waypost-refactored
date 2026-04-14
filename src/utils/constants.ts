@@ -40,12 +40,16 @@ export type JobRecord = {
 // ── jobs-linkedin.xlsx columns ────────────────────────────────────────────
 export type LinkedInJobRecord = {
   companyName:     string;
+  companyPage?:    string;
+  companyId?:      string;
   roleTitle:       string;
   location:        string;
   description:     string;
   summary?:        string;
-  internalLink:    string;
-  externalLink:    string;
+  jobLink?:        string;   // camelCase header from writer.js
+  applyLink?:      string;   // camelCase header from writer.js
+  internalLink?:   string;   // legacy fallback
+  externalLink?:   string;   // legacy fallback
   postedRelative:  string;
   postedAbsolute:  string;
   scrapedAt:       string;

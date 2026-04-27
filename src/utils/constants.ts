@@ -7,7 +7,7 @@ export type NormalizedJob = {
   description:   string;
   link:          string;
   scrapedAt:     string;
-  source:        'scraper' | 'linkedin';
+  source:        'scraper' | 'linkedin' | 'direct';
   _parsedDate:   Date | null;
   rawPostedDate: string;   // exact string from the file, shown as grey subtitle
 };
@@ -80,3 +80,26 @@ export interface ParsedCompanyWithTranslation extends ParsedCompany {
 
 export type ViewMode = 'jobs' | 'companies';
 
+
+// ── jobs-direct_*.xlsx columns (server-direct-URL-drill Phase 2 output) ──────
+export type DirectJobRecord = {
+  'Company':       string;
+  'Job Title':     string;
+  'Location':      string;
+  'Department':    string;
+  'Job Type':      string;
+  'Description':   string;
+  'Summary':       string;
+  'Salary':        string;
+  'Posted Date':   string | number | Date;
+  'Closing Date':  string | number | Date;
+  'Reference ID':  string;
+  'Apply Link':    string;
+  'External Link': string;
+  'Career Hub':    string;
+  'Source URL':    string;
+  'ATS Platform':  string;
+  'Enriched At':   string;
+  // Phase 1 only (drilled_cards, no enrichment yet)
+  'Scraped At'?:   string;
+};

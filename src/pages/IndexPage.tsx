@@ -5,6 +5,7 @@ import { CompanyItem }             from '../components/Companies/CompanyItem';
 import { TranslationSelector }     from '../components/Translation/TranslationSelector';
 import { useLoadJobs }             from '../hooks/useLoadJobs';
 import { useLoadLinkedInJobs }     from '../hooks/useLoadLinkedInJobs';
+import { useLoadDirectJobs }       from '../hooks/useLoadDirectJobs';
 import { useLoadCompanies }        from '../hooks/useLoadCompanies';
 import { useFilteredData }         from '../hooks/useFilteredData';
 import { FloatingFooter }           from '../components/Layout/FloatingFooter';
@@ -52,14 +53,15 @@ const IndexPage: React.FC = () => {
   // ── Data ─────────────────────────────────────────────────────────────
   const { jobs: scraperJobs,  loading: jLoading }  = useLoadJobs();
   const { jobs: linkedInJobs, loading: liLoading }  = useLoadLinkedInJobs();
+  const { jobs: directJobs,   loading: dLoading }   = useLoadDirectJobs();
   const { companies,          loading: cLoading }   = useLoadCompanies();
 
   const allJobs = useMemo(() => {
-    const merged = [...scraperJobs, ...linkedInJobs];
+    const merged = [...scraperJobs, ...linkedInJobs, ...directJobs];
     return merged.sort(
       (a, b) => (b._parsedDate?.getTime() ?? 0) - (a._parsedDate?.getTime() ?? 0),
     );
-  }, [scraperJobs, linkedInJobs]);
+  }, [scraperJobs, linkedInJobs, directJobs]);
 
   const { filteredJobs, filteredCompanies } = useFilteredData(
     allJobs, companies, filters, sortKey, sortAsc,
@@ -117,7 +119,7 @@ const IndexPage: React.FC = () => {
     return cos.map(c => `· ${c}`).join('   ');
   }, [allJobs]);
 
-  const loading = view === 'jobs' ? (jLoading || liLoading) : cLoading;
+  const loading = view === 'jobs' ? (jLoading || liLoading || dLoading) : cLoading;
   const count   = view === 'jobs' ? filteredJobs.length : filteredCompanies.length;
 
   return (
